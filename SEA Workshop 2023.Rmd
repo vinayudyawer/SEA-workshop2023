@@ -54,17 +54,17 @@ data analysis and has some other functionalities which may surprise you!
 
 <br>
 
-This **R** workshop is intended to run for two  and will be divided into 3 sessions.
+This **R** workshop is intended to run across 4 sessions.
 
 <br>
 
--   **Session 1:** *Getting familiar with input data formats for acoustic telemetry*
+-   **Session 1:** *Getting familiar with R and spatial data*
 
 1.  *Exploring* the different export formats of acoustic telemetry data
 
 <br>
 
--   **Session 2:** *Working with actel and RSP*
+-   **Session 2:** *Working with satellite tracking data*
 
 1.  Recreating *in-water tracks* at **estuarine** and **coastal habitats**
 2.  Analysing space-use areas with **dynamic Brownian Bridge Movement Models**
@@ -74,12 +74,22 @@ This **R** workshop is intended to run for two  and will be divided into 3 sessi
 
 <br>
 
--   **Session 3:** *Working with VTrack and re**mo**ra*
+-   **Session 3:** *Working with acoustic tracking data*
 
 1.  Using the *VTrack* R package to explore patterns in animal detections and dispersal
 2.  Using the *re**mo**ra* R package to interactively explore your telemetry data
 3.  Undertaking Quality control checks on your raw detection data
 4.  Extracting and appending environmental variables to acoustic telemetry data
+
+<br>
+
+-   **Session 4:** *Using online tools and ChatGPT to assist with R coding*
+
+1.  Using the *VTrack* R package to explore patterns in animal detections and dispersal
+2.  Using the *re**mo**ra* R package to interactively explore your telemetry data
+3.  Undertaking Quality control checks on your raw detection data
+4.  Extracting and appending environmental variables to acoustic telemetry data
+
 
 <br> <br>
 
