@@ -1,0 +1,1557 @@
+---
+title: 
+subtitle: 
+author: 
+date:
+output:
+  html_document:
+    toc: false
+    toc_float: true 
+    depth: 2
+    number_sections: false
+    theme: spacelab
+    highlight: pygments
+editor_options: 
+  markdown: 
+    wrap: 150
+---
+
+```{r, echo=FALSE}
+htmltools::img(src =knitr::image_uri('Images/banner1.png'),
+               alt = 'logo', 
+               style = 'position:center; top:0; left:0; padding:0px;')
+```
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# SEA Shark and Ray Research and Conservation Workshop{.tabset .tabset-fade}
+
+<br>
+
+## Introductions
+
+### Who are we?
+
+**Yuri** is a Research Fellow at the Marine Predator Research Group at Macquarie University (Sydney). He is interested in trophic and spatial ecology
+of marine animals, particularly sharks, in relation to anthropogenic threats such as fishing, habitat loss and climate change. He is the developer of
+the [RSP](https://github.com/YuriNiella/RSP) **R** package to analyse the movements of animals tracked with acoustic transmitters accounting for
+complex topography. You can read more about RSP in [Niella et al. 2020](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13484).
+
+**Vinay** is a Research Scientist at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly
+interested in using spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using **R** to
+analyse and visualise large and complex spatial datasets. He has developed **R** code and packages to analyse 2 and 3 dimensional movement patterns of
+animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's **R** codes can be found on his [github
+page](https://github.com/vinayudyawer). 
+
+<br>
+
+### Course outline
+
+**In this course you will learn about different ways to analyse and interpret your aquatic telemetry datasets using R**. This workshop will
+demonstrate how **R** can make the processing of spatial data much quicker and easier than using standard GIS software! At the end of this workshop
+you will also have the annotated **R** code that you can re-run at any time, share with collaborators and build on with those newly acquired data!
+
+We designed this course not to comprehensively cover all the tools in **R**, but rather to give you an understanding of options on how to analyse your
+acoustic telemetry data. Every new project comes with its own problems and questions and you will need to be independent, patient and creative to
+solve these challenges. It makes sense to invest time in becoming familiar with **R**, because today **R** is the leading platform for environmental
+data analysis and has some other functionalities which may surprise you!
+
+<br>
+
+This **R** workshop is intended to run for about 2.5 hours and will be divided into 3 sessions.
+
+<br>
+
+-   **Session 1:** *Getting familiar with input data formats for acoustic telemetry*
+
+1.  *Exploring* the different export formats of acoustic telemetry data
+
+<br>
+
+-   **Session 2:** *Working with actel and RSP*
+
+1.  Recreating *in-water tracks* at **estuarine** and **coastal habitats**
+2.  Analysing space-use areas with **dynamic Brownian Bridge Movement Models**
+3.  Estimating the **overlaps** in *space and time* between groups of animals
+4.  Calculating the **distances travelled** by tracked animals
+5.  Plotting and customizing space-use **maps** both in **R** and **QGIS**
+
+<br>
+
+-   **Session 3:** *Working with VTrack and re**mo**ra*
+
+1.  Using the *VTrack* R package to explore patterns in animal detections and dispersal
+2.  Using the *re**mo**ra* R package to interactively explore your telemetry data
+3.  Undertaking Quality control checks on your raw detection data
+4.  Extracting and appending environmental variables to acoustic telemetry data
+
+<br> <br>
+
+### Course Resources
+
+The course resources will be emailed to you prior to the workshop. However, you can also access the data and scripts we will work through in this
+course, download the course resources from the **IMOS-AnimalTracking** [GitHub](https://github.com/IMOS-AnimalTracking/Innovasea-IMOS-Workshop-2022)
+page. This page contains the course documents, telemetry example data and R scripts we are going to work with. To download the folder click on the
+green **[Code]{style="color:green"}**, dropdown menu and select **"Download ZIP"**
+
+![](Images/github.png)
+
+<br><br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## Session 1
+
+
+### Getting familiar with input data formats
+|                          |
+|:-------------------------|
+| ![](Images/Receiver.gif) |
+
+Currently there are several data management tools that are extremely useful in storing, cleaning, exploring and analysing data obtained using Acoustic
+Telemetry. One that everyone here may be familiar with is the ***VUE*** software that you have been using to communicate with your Innovasea receivers
+to offload and store data. In addition to software, several online data repositories exist to store and share acoustic telemetry data. The [Australian
+Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) maintained by IMOS ATF houses national acoustic telemetry datasets and users
+can store and access acoustic telemetry data through the database. Each data source have their own data export formats, which are not always
+interchangeable when using with **R** packages. In addition to this, new formats have now been developed via the ***Fathom*** platform to effectively
+store and export data.
+
+In general, acoustic telemetry datasets have at least 3 components that are required for analyses:
+
+1.  **Detection data:** This includes the only the presence of tagged individuals on specific receivers.
+2.  **Transmitter metadata:** This includes metadata information on the tag specifications. Sometimes this also includes metadata of the animal
+    tagged.
+3.  **Acoustic array metadata:** This includes coordinates of all the recievers used to monitor tagged animals in the study system.
+
+
+<br><br>
+
+#### 1.1 Exploring the different export formats of acoustic telemetry data {.tabset .tabset-fade .tabset-pills}
+
+Here we will go through 3 different formats that acoustic telemetry data can come in, and how each are structured. This is not an extensive list, but
+just includes the main formats currently used by software and expected by R packages. If you want to have a closer look at these data formats, we have
+provided 3 example datasets in the ***Data export formats*** folder in the data folder you have downloaded.
+
+<br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### VUE format
+
+Exporting detection data from VUE provides only a single file. This includes only the detection data. The researcher is responsible to keep metadata
+for each receiver within the array and tag deployment, which are also needed for a full analysis.
+
+![](Images/Formats/vue.png) 
+
+<br><br><br>
+<br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### Fathom format
+
+The new Fathom csv format has a more complex format to be able to weave multiple datasets in the same file. The Fathom csv format has a number of
+fixed features that provide information on the headings of the different datasets. This includes the first 26 rows that define the field names for
+each data record type (blue block below). The first column in each line of the dataset after this block indicates what data type each row contains
+(orange column). This includes a range of data types including including
+
+-   *DET:* detections
+-   *DIAG:* receiver diagnostics
+-   *DEPTH/TEMP:* sensor data
+-   *BATTERY:* receiver battery health
+-   *CFG_STATION:* receiver/array metadata
+
+This format of data will require a fair amount of formatting prior to it being used for further analysis if you are using R to analyse your data. The
+data format allows for both detection and reciever metadata, as well as a range of other environmental and diagnostic data stored in the same place.
+One dataset that researchers still need to maintain and pull in for a thorough analysis workflow would be the transmitter metadata.
+
+![](Images/Formats/fathom.png) 
+
+<br><br><br>
+<br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### IMOS ATF format
+
+Detection data exported from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) has its own format. The database
+website allows reasearchers to access and download detection, tag metadata and receiver metadata for a selected tagging project. This data export have
+a large number of columns that provide a comprehensive information associated with each detection, tag or receiver. The format of the detection data
+include the following 32 column names:
+
+![](Images/Formats/imos_detections.png)
+
+The database webpage also allows users to download complementary receiver metadata that has 15 columns:
+
+![](Images/Formats/imos_recmeta.png)
+
+As well as tag metadata with 24 columns:
+
+![](Images/Formats/imos_tagmeta.png)
+
+If size and other biological variables were collected for individuals (can be multiple measures) and additional `animal measures` file can be
+downloaded:
+
+![](Images/Formats/imos_meas.png) 
+
+
+<br><br><br>
+<br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## Session 2
+
+### Working with actel and RSP
+|                             |
+|:----------------------------|
+| ![](Images/bull_banner.png) |
+
+Let's first install the R packages necessary:
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+install.packages("actel")
+install.packages("sf")
+install.packages("raster")
+install.packages("ozmaps")
+install.packages("patchwork")
+install.packages("geosphere")
+install.packages("cmocean")
+```
+
+We will need the `remotes` package to install RSP from GitHub:
+
+```{r, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("YuriNiella/RSP", build_opts = c("--no-resave-data", "--no-manual"), build_vignettes = TRUE)
+```
+
+All the information you need on how to perform the RSP analysis can be found in the package vignettes:
+
+```{r, eval=FALSE}
+browseVignettes("RSP")
+```
+
+Loading packages:
+
+```{r, eval=FALSE}
+library(tidyverse)
+library(actel)
+library(RSP)
+library(sf)
+library(raster)
+library(ozmaps)
+library(patchwork)
+library(geosphere)
+library(cmocean)
+```
+
+<br>
+
+#### 2.1. Analysing bull shark movements in an estuarine system
+
+During this first part of our pactice we will analyse the movements of **6 bull sharks** moving through the Kallang-Bellinger estuary (New South
+Wales).
+
+<br>
+
+##### 2.1.1. Filtering detections with actel
+
+Acoustic telemetry datasets often include **false detections**: animals that were *not present* in the study area, animals that may have died after
+release, or shed tags. Before we can analyse our data using `RSP`, we need to first filter our detections using the `actel` package. You can find more
+information about actel in [Flávio & Baktoft 2020](https://besjournals.onlinelibrary.wiley.com/doi/epdf/10.1111/2041-210X.13503). This is necessary to
+make sure we only include the most realiable data for the space-use analysis with RSP:
+
+```{r, eval = FALSE}
+setwd("data/Kalang-Bellinger")
+exp.results <- explore(tz = 'Australia/Sydney', report = FALSE, GUI = 'never')
+n
+n
+```
+
+
+
+Please note that actel is a very interactive package, and its preliminary analyses (i.e.`explore()`, `migration()`, and `residency()` functions) can
+be very *talkative*. They will identify potential **inconsistencies** in the data and ask the user for further detail/actions. We will see more
+examples of this in the next part of our practice.
+
+<br>
+
+##### 2.1.2. Refining in-water paths with RSP
+
+Before we can get started with RSP, we first need to load a **shapefile** our our study area. This file will be crucial in delimiting the **water**
+and **land** boundaries in the area where the animals were tracked. The shapefile will be loaded and converted to a raster using the `loadShape()`
+funciton:
+
+```{r, eval = FALSE}
+# Load land shapefile
+water <- loadShape(path = "shapefile/", shape = "Kalang-Bellinger.shp", 
+                   size = 0.0001, # Pixel size for the rendered raster (shapefile units)
+                   buffer = 0.01) # Water area buffer surrounding the shapefile
+
+plot(water) # Plot with raster package
+```
+
+
+It is important to check that the loaded shapefile (and pixel size used) are of enough quality so that RSP won't crash. We can check this using the
+`plotRaster()` function:
+
+```{r, eval = FALSE}
+# Check if receivers are inside the water
+plotRaster(input = exp.results, base.raster = water, 
+           coord.x = "Longitude", coord.y = "Latitude") 
+```
+
+<br>
+
+After we are happy with the quality of the raster, we need to create a **transition layer** object. The transition layer can be of 4, 8 or 16
+directions (we will see more details about this during the workshop), and will be used by RSP to create the in-water tracks:
+
+```{r, eval = FALSE}
+# Create a transition layer with 8 directions
+tl <- transitionLayer(x = water, directions = 8)
+```
+
+<br>
+
+Now that we have a good raster of our study region delimiting the land and water areas, we can recreate the shortest in-water tracks of our tagged
+animals. Depending on the **size of your study area** and the **species of animals you are tracking**, you may need to customize the arguments of
+`runRSP()` to fine-tune the calculations of space-use. We won't to too much in detail about all arguments here, but you can have a better look at them
+in the package documentation using `?runRSP()`. For example, if you are tracking benthic animals, you may find it usefull to increase the `max.time`
+argument so that the tracks don't get separated every 24-h (default value) when animals are not detected for long periods of time. Besides, you can
+play with the `er.ad` argument when your study area is very small (e.g. narrow river channels), and you don't space-use contours to become
+overly-inflated. We will also discuss these arguments in more detail during the workshop.
+
+```{r, eval = FALSE}
+# Create in-water tracks
+rsp.run <- runRSP(input = exp.results, t.layer = tl, verbose = TRUE,
+                  coord.x = "Longitude", coord.y = "Latitude", 
+                  er.ad = 2, # Location error increment (metres)
+                  max.time = 24) # Temporal interval separating new tracks (24 hours = default)
+
+names(rsp.run) # runRSP outputs
+```
+
+<br>
+
+Most RPS outputs are *lists* named after each transmitter ID. We can check the *track metadata* results for each tracked animal in the `$tracks`
+object:
+
+```{r, eval = FALSE}
+# Check track metadata
+head(rsp.run$tracks)
+rsp.run$tracks$'A69-9001-18784' # Individual tracks
+```
+
+| Track    | original.n | new.n |          First.time |           Last.time |    Timespan | Valid |
+|:---------|-----------:|------:|--------------------:|--------------------:|------------:|------:|
+| Track_01 |        678 |  1992 | 2019-02-20 16:21:59 | 2019-03-02 19:46:31 | 243.4 hours |  TRUE |
+| Track_02 |        419 |   988 | 2019-03-03 23:07:12 | 2019-03-08 10:43:40 | 107.6 hours |  TRUE |
+| Track_03 |        503 |  1791 | 2019-03-09 23:42:03 | 2019-03-19 19:17:25 | 235.6 hours |  TRUE |
+| Track_04 |        110 |   391 | 2019-03-20 19:30:22 | 2019-03-22 21:28:27 |  49.9 hours |  TRUE |
+| Track_05 |        172 |   507 | 2019-03-25 01:55:50 | 2019-03-29 01:38:29 |  95.7 hours |  TRUE |
+| Track_06 |         43 |    53 | 2019-03-30 16:17:55 | 2019-03-30 19:19:46 |   3.0 hours |  TRUE |
+
+Where the **Track** column identifies the respective RSP tracks (separated by the `max.time` values), **original.n** is the number of total acoustic
+detections during the respetive tracks, **new.n** is the number of added RSP locations, **First.time** is the first hour the animal got detected (in
+local time), **Last.time** is the time of last acoustic detection (also in local time), **Timespan** is the duration of each track in hours, and
+**Valid** identifies if the track was considered as valid or not (single detections separated by the `max.time` threshold are automatically
+invalidated for the calculations of space-use areas in the next section).
+
+<br>
+
+Now that we have recreated the animal movements inside the water we can use the `plotTracks()` function to easily plot an RSP track of interest. The
+function `addStations()` can be used together with any RSP plot function to quickly add the receiver locations to the maps plotted. These functions
+follow the `ggplot2` synthax, so any ggplot2 function can be used to further customize these plots.
+
+```{r, eval = FALSE}
+# Plot a track with RSP
+plotTracks(input = rsp.run, base.raster = water, 
+           tag = "A69-9001-18784", track = 10) + # Select tag and track of interest
+  addStations(rsp.run) # add receiver locations
+```
+
+<br>
+
+The RSP output objects store information on the tracked animals as *lists* named after each trasmitter ID:
+
+```{r, eval = FALSE}
+names(rsp.run$detections) # Output saved separated for each tag
+##  "A69-9001-14230" "A69-9001-14270" "A69-9001-18767" "A69-9001-18784" "A69-9001-18831"
+
+head(rsp.run$detections$'A69-9001-18784', 20)
+```
+    
+<br>
+
+Now we are going to use the `sf` package to plot all tracks from a single sharks, using the base shapefile of our study area and colouring the tracks
+by date:
+
+```{r, eval = FALSE}
+# Plot all individual tracks (sf package)
+shp <- st_read("shapefile/Kalang-Bellinger.shp") # Load study area shapefile
+detecs <- rsp.run$detections$'A69-9001-18784' # Extract shark RSP tracks
+detecs$Year_Month <- substr(detecs$Timestamp, 1, 7) # New time variable
+head(detecs)
+
+ggplot() + theme_bw() +
+  geom_sf(data = shp, fill = 'brown', alpha = 0.3, size = 0.07, colour = "black") +
+  geom_point(data = detecs, aes(x = Longitude, y = Latitude, colour = Year_Month), size = 0.7) +
+  geom_path(data = detecs, aes(x = Longitude, y = Latitude, colour = Year_Month), size = 0.3) +
+  coord_sf(xlim = c(152.99, 153.05), ylim = c(-30.51, -30.47), expand = FALSE)
+```
+
+<br>
+
+Because RSP recreates the animal movements **around** land barriers, we can use the in-water locations to calculate the most likely distances
+travelled. You can use this metrics, for example, to look at how animals movements vary in time in relation to environmental variables. Here we will
+investigate how the bull shark movements varied in time in relation to the *rive mouth*:
+
+```{r, eval = FALSE}
+# Calculate distances to river mouth:
+mouth <- c(153.031006, -30.501217) # River mouth location
+rsp.tracks <- do.call(rbind.data.frame, rsp.run$detections) # Extract all shark RSP tracks
+rsp.tracks$Distance.mouth <- as.numeric(distm(x = mouth, # Calculate distances
+                                              y = rsp.tracks[,16:17])) / 1000 # Distances in km
+
+# Plot distances to river mouth throughout the tracking period:
+ggplot() + theme_bw() +
+  geom_path(data = rsp.tracks, aes(x = Date, y = Distance.mouth, colour = Track)) +
+  theme(legend.position = "bottom") +
+  guides(colour = guide_legend(ncol = 10, nrow = 6)) +
+  labs(y = "Distance to river mouth (km)") +
+  facet_wrap(~Signal, nrow = 5, ncol = 1) 
+```
+
+<br>
+
+##### 2.1.3. dynamic Brownian Bridge Movement Models (dBBMM)
+
+The **dynamic Brownian Bridge Movement Model** is one type of space use model to estimate *utilization distributions (UD) areas* of tracked animals.
+One of its advantages over traditional methods (e.g. Kernel Utilization Distributions - KUD) is that it quantifies UDs based on the animal paths
+rather than on discrete location points, therefore, accounting for temporal autocorrelation. In addition, it can easily handle **large data volumes**
+sampled over *infrequent intervals*, which is often the case in telemetry datasets. You can find more information about these models in [Kranstauber
+et al. 2012](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-2656.2012.01955.x)
+
+<br>
+
+With RSP, we can apply dBBMMs either during the **entire monitoring period** or according to **fixed temporal intervals**. Please have in mind that
+these are **computationally heavy** models, and running your models for long tracking times (\>1 year) and across large geographical areas with many
+individuals tracked can **kill** your R session (and computer). But don't worry, RPS has got you covered on this. We can use the `start.time` and
+`stop.time` arguments in the `dynBBMM()` function to choose temporal windows for which to run the models for. You can also set the `timeframe`
+argument to calculate your models across a fixed temporal interval (default is 24-h periods). Finally, if you are interested in the size of space-use
+areas of **at least two groups of animals**, and how they **overlap in space and time** during your study period, you can perform the analysis with
+steps and RSP will export the output progress in your working directory at it goes. This 1) ensures that you you won't lose the data that has already
+been processed in case your computer *crashes*, and 2) let's you *pause the data processing* and come back to it at a later time if you need to use
+your computer for some other activity. In the next sections we will see examples of these analyses.
+
+<br>
+
+###### Calculate dBBMM for the entire monitoring period
+
+In our example data, bull sharks were detected in the study estuary between **20 February 2019** and **28 June 2020**. Let's select a part of this
+study period to look at their patterns of space-use (between 01 and 15 February 2020):
+
+```{r, eval = FALSE}
+# Calculate dBBMM model: 
+# Warning: takes around 3 min to run
+dbbmm.run <- dynBBMM(input = rsp.run, base.raster = water, UTM = 56, # Provide UTM of study area
+                     start.time = "2020-02-01 00:00:00", 
+                     stop.time = "2020-02-15 00:00:00") # Select a subset of the tracking period
+
+# save(dbbmm.run, file = "dBBMM1.RData") 
+# load("dBBMM1.RData")
+```
+
+Since these models can take some time to finish, depending on your data and computer set up, you can use the `save()` and `load()` functions to save
+the dBBMM outputs in your computer so that you don't need to rerun them in every session.
+
+<br>
+
+Again, RSP has a built in function to plot space-use maps that you can use to produce publication-ready figures. You just need to especify the
+**transmitter** (`tag` argument) and **RSP track** (`track`) of interest:
+
+```{r, eval = FALSE}
+# Plot dBBMM models with RSP
+dbbmm.run$valid.tracks # Valid tracks metadata
+
+plotContours(input = dbbmm.run, tag = "A69-9001-18767", track = 16)
+
+plotContours(input = dbbmm.run, tag = "A69-9001-14230", track = 27) +
+  addStations(rsp.run) # add receiver locations
+```
+
+Depending on how experienced you are with *geospatial analysis in R*, you may think that you don't like the RSP maps and want to create your own. I
+totally get it and won't take it personally, I swear - as long as you **cite RSP in your publication** citation("RSP") - haha. In the next part of the
+practice we will learn how to find the raw raster files exported during the dBBMM calculations to create custom maps in R:
+
+```{r, eval = FALSE}
+# Raw dBBMM raster file
+dbbmm.run$group.rasters$F$"A69.9001.18784_Track_40" # Raw dBBMM raster file
+plot(dbbmm.run$group.rasters$F$"A69.9001.18784_Track_40") # Plot with raster package
+
+# Reproject raw raster and transform to dataframe (ggplot2)
+projected_raster <- 
+  projectRaster(dbbmm.run$group.rasters$F$"A69.9001.18784_Track_40", 
+                crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 ") # CRS of interest
+plot(projected_raster) # Check coordinates are reprojected
+
+df.raster <- as.data.frame(projected_raster, xy = TRUE) # Convert raster to data.frame (ggplot2)
+names(df.raster)[3] <- "values"
+head(df.raster)
+df.raster <- df.raster[-which(is.na(df.raster$values) == TRUE), ] # Remove empty values (land)
+df.raster <- df.raster[which(df.raster$values <= 0.95), ] # Select only <95% levels 
+summary(df.raster)
+
+# Select RSP track for that tag and track of interest
+df.track <- subset(rsp.run$detections$"A69-9001-18784", Track == "Track_40")
+head(df.track) # Check track data
+head(rsp.run$spatial$stations) # Receiver locations info
+
+# Plot map
+ggplot() + theme_bw() +
+  geom_sf(data = shp, fill = 'forestgreen', alpha = 0.2, size = 0.07, colour = "black") +
+  geom_tile(data = df.raster, aes(x = x, y = y, fill = values)) +
+  scale_fill_gradientn(colours = rev(cmocean('matter')(100))) +
+  coord_sf(xlim = c(152.99, 153.05), ylim = c(-30.51,-30.47), expand = FALSE) +
+  geom_path(data = df.track, aes(x = Longitude, y = Latitude), size = 0.2, colour = "darkgray") +
+  geom_point(data = df.track, aes(x = Longitude, y = Latitude), pch = 21,
+             fill = "black", colour = "darkgray", size = 1.3, stroke = 0.2) +
+  geom_point(data = rsp.run$spatial$stations, aes(x = Longitude, y = Latitude), pch = 21,
+             fill = "red", colour = "black", size = 1.5, stroke = 0.2) +
+  labs(x = "", y = "", fill = "dBBMM (%)", title = "A69-9001-18784: 01 Feb - 15 Feb")
+```
+
+<br>
+
+###### Calculate overlaps between groups of animals (daily dBBMM)
+
+We will now use the argument `timeframe` to calculate the dBBMM over 1-day periods, so that RSP can calculate the ammounts of overlap between the male
+(1) and female (5) bull sharks tracked.
+
+```{r, eval = FALSE}
+# Run dBBMM with daily resolutions
+# Warning: takes around 8 min to run
+dbbmm.time <- dynBBMM(input = rsp.run, base.raster = water, UTM = 56, 
+                      timeframe = 24, # Temporal interval of interest (in hours) = timeslots
+                      start.time = "2020-02-01 00:00:00", stop.time = "2020-02-15 00:00:00") 
+
+# save(dbbmm.time, file = "dBBMM2.RData") 
+# load("dBBMM2.RData")
+```
+
+<br>
+
+When we run the dBBMM over temporal intervals, a new object called `timeslot` will be exported by the anslysis. This contains information about the
+**start** and **stop** times for each timeslot:
+
+```{r, eval = FALSE}
+head(dbbmm.time$timeslots) # Timeslot metadata
+```
+
+| slot |      start |                stop |
+|:-----|-----------:|--------------------:|
+| 1    | 2020-02-01 | 2020-02-01 23:59:59 |
+| 2    | 2020-02-02 | 2020-02-02 23:59:59 |
+| 3    | 2020-02-03 | 2020-02-03 23:59:59 |
+| 4    | 2020-02-04 | 2020-02-04 23:59:59 |
+| 5    | 2020-02-05 | 2020-02-05 23:59:59 |
+| 6    | 2020-02-06 | 2020-02-06 23:59:59 |
+
+<br>
+
+Now that have the dBBMMs, we can calculate the **size** of the respective space-use areas (in squared metres) for each *contour level* of interest. By
+default, RSP will calculate these areas for the 50% and 95% contours, as there are the most often used in the scientific literature. But you can
+select any levels of interest using the `breaks` argument:
+
+```{r, eval = FALSE}
+# Calculate size of space-use areas in squared metres
+areas.group <-
+  getAreas(input = dbbmm.time,
+           breaks = c(0.5, 0.95),# 50% and 95% contours (default)
+           type = "group") # for individual areas use type = "track"
+
+areas.group$areas$F
+areas.group$areas$M
+```
+
+<br>
+
+I get contacted often by people interested in **exporting the dBBMMs contour areas** as *shapefiles*, so that they can be processed/plotted using
+other GIS software such as ArcGIS. Here we will use QGIS, as it's an **open source** option, and you can download it from
+[here](https://www.qgis.org/en/site/forusers/download.html). Since the dBBMMs results are saved as raster files it requires a bit of playing around -
+again don't worry, we've got you covered. We will need to:
+
+1.  Select the contour level of interest;
+2.  Reproject it from UTM CRS (dBBMM only accepts this option)
+3.  Convert the rasters to polygons
+4.  For some reason, sometimes the `dissolve` function in R does not always work on all raster pixels. We will learn how to further process them in
+    QGIS.
+
+```{=html}
+<!-- -->
+```
+```{r, eval = FALSE}
+## Extract raw rater objects for timeslot 9
+names(areas.group)
+
+# Females 50% contour
+areas.group$rasters$F$"9"$"0.5" # Raster of interest
+projected_raster <- projectRaster(areas.group$rasters$F$"9"$"0.5", # Reproject
+                                  crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 ")
+plot(projected_raster) # Check raster is reprojected
+polygon <- rasterToPolygons(projected_raster, fun=function(x){x > 0},
+                            dissolve = TRUE, na.rm = FALSE) # Select only positive pixels
+plot(polygon) # Not all raster cells are dissolved (post processing in QGIS!)
+shapefile(polygon, "shapefile/Female_50.shp") # Export polygon to shapefile
+
+# Females 95% contour
+areas.group$rasters$F$"9"$"0.95" # Raster of interest
+projected_raster <- projectRaster(areas.group$rasters$F$"9"$"0.95", # Reproject
+                                  crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 ")
+plot(projected_raster) # Check raster
+polygon <- rasterToPolygons(projected_raster, fun=function(x){x > 0},
+                            dissolve = TRUE, na.rm = FALSE) # Select only positive pixels
+plot(polygon) # Not all cells are dissolved (post processing in QGIS)
+shapefile(polygon, "shapefile/Female_95.shp") # Export polygon to shapefile
+
+# Plot shapefiles externally using QGIS
+```
+
+<br>
+
+One of the main interesting applications of dBBMMs is to look at how animal space-use varies in time. Let's see how female and male shark movements
+varied in the Kalang-Bellinger estuary during this 15-day period:
+
+```{r, eval = FALSE}
+# Temporal variation in space-use
+head(areas.group$areas$F) # Space-use size areas (m2)
+areas.group$areas$F$Date <- 
+  dbbmm.time$timeslots$start[match(areas.group$areas$F$Slot, 
+                                   as.character(dbbmm.time$timeslots$slot))] # Match Female timeslots to date variable
+
+areas.group$areas$F$Group <- "F" # Add group information (Females)
+areas.group$areas$M$Date <- 
+  dbbmm.time$timeslots$start[match(areas.group$areas$M$Slot, 
+                                   as.character(dbbmm.time$timeslots$slot))] # Match Male timeslots to date variable
+
+areas.group$areas$M$Group <- "M" # Add group information (Male)
+
+plot.areas <- rbind(areas.group$areas$F, areas.group$areas$M)
+plot.areas
+
+ggplot() + theme_bw() +
+  geom_line(data = plot.areas, aes(x = Date, y = area.95 / 1000, colour = Group)) +
+  labs(y = expression(paste('95% contour area (',km^2,')')))
+```
+
+<br>
+
+The plot suggests that both female and male sharks used larger areas between February 7 and 8. But were they using the same areas (overlap)? We can
+investigate this using the `getOverlaps()` function, and `plotOverlaps()` to plot their overlaps in **space and time**:
+```{r, eval = FALSE}
+# Calculate overlaps between groups
+overlap.save <- getOverlaps(input = areas.group)
+
+names(overlap.save) # Overlaping area info + raw rasters
+names(overlap.save$areas) # List by dBBMM contour
+names(overlap.save$areas$'0.95') # Values in m2 and %
+names(overlap.save$areas$'0.95'$absolutes) # List by timeslot
+
+overlap.save$areas$'0.95'$absolutes[9] # m2
+overlap.save$areas$'0.95'$percentage[9] # %
+
+plotOverlaps(overlaps = overlap.save, areas = areas.group, base.raster = water, 
+             groups = c("M", "F"), timeslot = 9, level = 0.95) 
+```
+
+<br>
+
+###### Analyse trends in space-use with steps
+
+This is a new RSP feature. When we work with computationally-heavy analyses it's good practice to **export our results** as we go so that we *don't
+loose our progress* in case of a power shortage, computer crash, etc. The function `getAreaStep()` integrates several RSP functions (`dynBBMM()`,
+`getAreas()` and `getOverlaps()`) to perform the analyses in **steps** (defined with the `timeframe` argument, in days) and saves the outputs in your
+computer as it goes. You define the name of the **output file** using the `name.new` argument. If you want to pause your analyses, you can simply stop
+the function progress and come back to it at a later time. You will then need to specify the name of the **old output file** using `name.file` and
+define the `start.time` of interest (i.e. the start date from when you want RSP to resume the calculations), and RSP will automatically import this
+file, include the new calculations, and export it to your computer again using the `name.new` name. Let's see an example of how this function works:
+
+```{r, eval = FALSE}
+# Warning: takes a couple of hours to run. Output is loaded on line 232.
+getAreaStep(input = rsp.run, base.raster = water, UTM = 56,
+            timeframe = 1, save = TRUE, 
+            start.time = "2020-02-01",
+            name.new = "dBBMM_data_new.csv", 
+            groups = c("M", "F"))
+```
+
+<br>
+
+The example file has run the analyses for the period between **01 February 2020** and **20 March 2020**. Let's load this dataset to check its output
+and plot the results investigate the bull shark movements in the Kalang-Bellinger during this period:
+
+```{r, eval = FALSE}
+# Load results
+df.step <- read.csv("dBBMM_data.csv")
+head(df.step)
+df.step$Start.time <- as.POSIXct(df.step$Start.time, format = "%Y-%m-%d %H:%M:%S", 
+                                 tz = "Australia/Sydney")
+
+# Convert long format for plotting
+df.step.plot <- 
+  df.step %>%
+  gather(Group, N,  "M_n", "F_n", factor_key=TRUE) %>%
+  gather(Area.contour, Size, 
+         "Area.M.50", "Area.M.95", 
+         "Area.F.50", "Area.F.95",
+         "Overlap.50.tot", "Overlap.95.tot",
+         "Overlap.50.freq", "Overlap.50.freq")
+
+head(df.step.plot)
+
+# Plot space-use area variation through time
+aux.plot <- subset(df.step.plot, Area.contour %in% c("Area.M.50", "Area.F.50", "Overlap.50.tot"))
+
+aux.plot$Area.contour[aux.plot$Area.contour == "Area.M.50"] <- "Male 50%" # Rename for plotting
+aux.plot$Area.contour[aux.plot$Area.contour == "Area.F.50"] <- "Female 50%" # Rename for plotting
+aux.plot$Area.contour[aux.plot$Area.contour == "Overlap.50.tot"] <- "Overlap 50%" # Rename for plotting
+
+ggplot() + theme_classic() +
+  geom_line(data = aux.plot, 
+            aes(x = Start.time, y = Size / 1000, 
+                colour = Area.contour)) +
+  labs(y = expression(paste('Area (',km^2,')')), x = "Date", colour = "Level")
+```
+
+<br>
+
+#### 2.2. Analysing bull shark movements along the coast
+
+In this part of the practice we will look at the bull shark movements away from the Kalang-Bellinger estuary (up and down the coast). Let's first
+start by clearing our working environment and doing some garbage collection to improve R memory use:
+
+```{r, eval = FALSE}
+rm(list = ls()) # Remove all estuarine files
+gc() # run garbage collection = improve memory use
+```
+
+<br>
+
+##### 2.2.1. Analysing bull shark movements along the coast
+
+One of the cool stuff about actel is that it can save an overall report of your preliminary analysis. You just need to set the `report` argument in
+the `explore()` function to `TRUE`. Let's see how the report looks like, and check some of the interactive steps in the `explore()` function:
+
+```{r, eval = FALSE}
+setwd("../Coastal")
+exp.results <- explore(tz = 'Australia/Sydney', report = TRUE, # Check out actel's report
+                       GUI = 'never')
+n
+n
+n
+n
+```
+
+<br>
+
+###### Refining the bull shark coastal movements
+
+When analysing animal movements at large coastal areas, it makes sense to use **larger raster pixel sizes**. What may occur is that, by increasing
+pixel size, some receivers located very close to the coast may end up **in land** which can cause RSP to crash. We will see an example of this issue,
+and how to overcome this problem by easily tweaking the shapefile in *QGIS*:
+
+```{r, eval = FALSE}
+# Check if receivers are inside the water: one receiver is on land! Show how to fix in QGIS
+plotRaster(input = exp.results, base.raster = water, 
+           coord.x = "Longitude", coord.y = "Latitude") 
+
+# Load fixed shapefile
+# Warning: takes a couple of minutes to run
+water <- loadShape(path = "shapefile/", shape = "Australia_WGS_fixed.shp", size = 0.01, buffer = 0.05)
+
+# save(water, file = "water_good.RData") 
+# load("water_good.RData")
+
+plotRaster(input = exp.results, base.raster = water, 
+           coord.x = "Longitude", coord.y = "Latitude") # Check all stations are inside the water
+```
+
+<br>
+
+Now that we have a good raster of our study area, let's create the transition layer. This process can take *quite some time*, depending on the raster
+pixel size and the size of your coastal area of interest. In addition, it's a good idea to use 16 directions for coastal areas, since lower directions
+may cause the animal movements to be placed very far from the coast (we will see why during the workshop).
+
+```{r, eval = FALSE}
+# Create a transition layer: 16 is usually better for coastal areas
+# Warning: takes a couple of minutes to run. Output is loaded bellow
+tl <- transitionLayer(x = water, directions = 16)
+```
+
+<br>
+
+When we are interested in the total animal movements along the coast, across large geographical areas, it may make more sense if RSP *does not*
+separate the detections into 24-h intervals (default). To change this we can simply set the `max.time` argument to a **very high value** so that each
+animal only gets 1 RSP track. In addition, by default RSP adds locations between acoustic receivers every *250 metres*. It may make more sense to add
+locations with larger intervals when we are interested in wide geographical areas, and we can customize this with the `distance` argument. In the
+example bellow, we will add RSP locations every 10 km:
+
+```{r, eval = FALSE}
+# Create in-water tracks:
+# Warning: takes a couple of minutes to run
+rsp.coast <- runRSP(input = exp.results, t.layer = tl, verbose = TRUE,
+                    coord.x = "Longitude", coord.y = "Latitude", 
+                    distance = 10000, # Add RSP locations every 20 km
+                    max.time = 50000) # Make it very big to get a single track for entire tracking
+
+# save(rsp.coast, file = "rsp_coast.RData") 
+# load("rsp_coast.RData")
+```
+
+<br>
+
+Now let's see the movements of each bull shark away from the Kalang-Bellinger estuary, and use the `ozmaps` package to plot the Australian State
+boundaries:
+
+```{r, eval = FALSE}
+# Extract total tracking dataset
+rsp.tracks <- do.call(rbind.data.frame, rsp.coast$detections) # Extract all shark tracks
+rsp.tracks$Year_Month <- 
+  as.numeric(paste( # Add new numeric time variable
+    substr(rsp.tracks$Timestamp, 1, 4), substr(rsp.tracks$Timestamp, 6, 7), sep = "."))
+head(rsp.tracks)
+
+# Plot individual tracks
+oz_states <- ozmap_states # Load Aus state shapefile 
+shp <- st_read("shapefile/Australia_WGS_fixed.shp") 
+
+# 14230
+ggplot() + theme_bw() +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, fill = 'dodgerblue', alpha = 0.3) +
+  geom_sf(data = shp, fill = 'lightgray', size = 0.07, colour = "black") +
+  geom_sf(data = oz_states, fill = NA, colour = "darkgray", lwd = 0.2) + 
+  annotate("text", x = 150, y = -30.501191, label = "Kalang-Bellinger", size = 3) 
+
+geom_path(data = subset(rsp.tracks, Signal == 14230), # Select animal of interest
+          aes(x = Longitude, y = Latitude, colour = Year_Month), size = 1) +
+  scale_colour_gradientn(colours = cmocean("thermal")(100), breaks = c(2019, 2020, 2021)) +
+  coord_sf(xlim = c(141, 155), ylim = c(-35, -8), expand = FALSE) +
+  labs(x = "", y = "", colour = "Year", title = "14230 - Female")
+
+# 14270
+ggplot() + theme_bw() +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, fill = 'dodgerblue', alpha = 0.3) +
+  geom_sf(data = shp, fill = 'lightgray', size = 0.07, colour = "black") +
+  geom_sf(data = oz_states, fill = NA, colour = "darkgray", lwd = 0.2) + 
+  annotate("text", x = 150, y = -30.501191, label = "Kalang-Bellinger", size = 3) +
+  geom_path(data = subset(rsp.tracks, Signal == 14270), # Select animal of interest
+            aes(x = Longitude, y = Latitude, colour = Year_Month), size = 1) +
+  scale_colour_gradientn(colours = cmocean("thermal")(100), breaks = c(2019, 2020, 2021)) +
+  coord_sf(xlim = c(141, 155), ylim = c(-35, -8), expand = FALSE) +
+  labs(x = "", y = "", colour = "Year", title = "14270 - Female") 
+
+# 18784
+ggplot() + theme_bw() +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, fill = 'dodgerblue', alpha = 0.3) +
+  geom_sf(data = shp, fill = 'lightgray', size = 0.07, colour = "black") +
+  geom_sf(data = oz_states, fill = NA, colour = "darkgray", lwd = 0.2) + 
+  annotate("text", x = 150, y = -30.501191, label = "Kalang-Bellinger", size = 3) +
+  geom_path(data = subset(rsp.tracks, Signal == 18784), # Select animal of interest
+            aes(x = Longitude, y = Latitude, colour = Year_Month), size = 1) +
+  scale_colour_gradientn(colours = cmocean("thermal")(100), breaks = c(2019, 2020, 2021)) +
+  coord_sf(xlim = c(141, 155), ylim = c(-35, -8), expand = FALSE) +
+  labs(x = "", y = "", colour = "Year", title = "18784 - Female") 
+
+# 18831
+ggplot() + theme_bw() +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, fill = 'dodgerblue', alpha = 0.3) +
+  geom_sf(data = shp, fill = 'lightgray', size = 0.07, colour = "black") +
+  geom_sf(data = oz_states, fill = NA, colour = "darkgray", lwd = 0.2) + 
+  annotate("text", x = 150, y = -30.501191, label = "Kalang-Bellinger", size = 3) +
+  geom_path(data = subset(rsp.tracks, Signal == 18831), # Select animal of interest
+            aes(x = Longitude, y = Latitude, colour = Year_Month), size = 1) +
+  scale_colour_gradientn(colours = cmocean("thermal")(100), breaks = c(2019, 2020, 2021)) +
+  coord_sf(xlim = c(141, 155), ylim = c(-35, -8), expand = FALSE) +
+  labs(x = "", y = "", colour = "Year", title = "18831 - Female") 
+
+# 18767
+ggplot() + theme_bw() +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, fill = 'dodgerblue', alpha = 0.3) +
+  geom_sf(data = shp, fill = 'lightgray', size = 0.07, colour = "black") +
+  geom_sf(data = oz_states, fill = NA, colour = "darkgray", lwd = 0.2) + 
+  annotate("text", x = 150, y = -30.501191, label = "Kalang-Bellinger", size = 3) +
+  geom_path(data = subset(rsp.tracks, Signal == 18767), # Select animal of interest
+            aes(x = Longitude, y = Latitude, colour = Year_Month), size = 1) +
+  scale_colour_gradientn(colours = cmocean("thermal")(100), breaks = c(2019, 2020, 2021)) +
+  coord_sf(xlim = c(141, 155), ylim = c(-35, -8), expand = FALSE) +
+  labs(x = "", y = "", colour = "Year", title = "18767 - Male") 
+```
+
+<br>
+
+RSP has a built in function to calculate the distances travelled by each animal, which are calculated for each RSP track. Here, since we only have 1
+track per shark, this will return the total distances travelled during the entire monitoring. These are also returned as RSP and Receiver only
+locations:
+
+```{r, eval = FALSE}
+# Calculate distances travelled by each shark
+df.dist <- getDistances(input = rsp.coast)
+df.dist # Both Receiver and RSP 
+
+# Plot total distances travelled by each shark and group
+plot1 <- plotDistances(input = df.dist, group = "F") 
+plot2 <- plotDistances(input = df.dist, group = "M") 
+
+(plot1 / plot2) + 
+  plot_layout(design = c(area(t = 1, l = 1, b = 4, r = 1), # Controls size of plot1
+                         area(t = 5, l = 1, b = 5.5, r = 1)), # Controls size of plot2
+              guides = "collect") # Single legend
+```
+
+<br>
+
+Let's calculate the total tracking times of each shark, and make a custom plot of distances travelled by individual including this information:
+
+```{r, eval = FALSE}
+# Summary of tracking time (number of days)
+rsp.tracks.sum <- 
+  rsp.tracks %>%
+  group_by(Transmitter) %>%
+  summarise(Track.time = as.numeric(difftime(time1 = max(Timestamp), time2 = min(Timestamp), units = "days")))
+
+rsp.tracks.sum
+
+# Add to tracking time to distance dataset
+df.dist$Time <- rsp.tracks.sum$Track.time[match(df.dist$Animal.tracked, rsp.tracks.sum$Transmitter)]
+df.dist
+
+# Custom plot of distances travelled and tracking times
+ggplot(data = subset(df.dist, Loc.type == "RSP")) + theme_bw() +
+  geom_col(aes(x = Dist.travel / 1000, y = Animal.tracked, fill = Group)) +
+  geom_text(aes(x = (Dist.travel / 1000) + 400, y = Animal.tracked, label = paste(round(Time, 1), "days"))) +
+  scale_x_continuous(limits = c(0, 5000)) +
+  labs(x = "Distance travelled (km)", y = "", fill = "Sex")
+```
+
+<br><br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+## Session 3
+
+### Working with VTrack and remora
+
+|                         |
+|:------------------------|
+| ![](Images/banner2.png) |
+
+In this session we will go through a brief walk through of how we can use the *VTrack* R package to quickly format and analyse large acoustic tracking
+datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
+called *re**mo**ra* that helps users to interactively explore thier data as well as append environmental data to detections to further your analysis
+of animal movements.
+
+Here we are just arming you with multiple tools to be able to analyse your data. Which analysis (and thus R package) is more appropriate and suitable
+to your dataset will depend on your study design, research questions and data available. For this session, we will use the same data you worked on in
+session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset*** in the data folder you have downloaded.
+
+
+<br><br>
+
+#### 3.1 Using the *VTrack* R package to explore patterns in animal detections and dispersal
+
+The **VTrack** package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
+have a more comprehensive walk through of **VTrack**, go through the examples on [this
+page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
+
+```{r, eval = FALSE}
+## Install packages
+install.packages("remotes")
+remotes::install_github("rossdwyer/VTrack")
+```
+   
+<br>
+
+If you R asks you if you would like to update packages, select **No**. This seems to be an issue with some people attempting to install packages from
+Github. You can update other packages separately if you feel that you need to, however doing it while installing a package from GitHub often stalls
+the whole process.
+
+```{r, eval = FALSE}
+## Load other useful packages
+library(VTrack)
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(mapview)
+```
+
+<br>
+
+##### 3.1.1 Input, explore and format data from IMOS repository to use in VTrack
+
+Lets have a look at the detection, tag and receiver/station metadata in R using the tidyverse.
+
+```{r, eval = FALSE}
+detections <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv")
+
+tag_metadata <- 
+  read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv") %>% 
+  left_join(read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv"))
+      
+station_info <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv")
+```
+
+<br>
+
+We will then format it so that **VTrack** can read the column names correctly
+
+```{r, eval = FALSE}
+detections <-
+  detections %>% 
+  transmute(transmitter_id = transmitter_id,
+            station_name = station_name,
+            receiver_name = receiver_name,
+            detection_timestamp = detection_datetime,
+            longitude = receiver_deployment_longitude,
+            latitude = receiver_deployment_latitude,
+            sensor_value = transmitter_sensor_raw_value,
+            sensor_unit = transmitter_sensor_unit)
+
+tag_metadata <-
+  tag_metadata %>% 
+  transmute(tag_id = transmitter_deployment_id,
+            transmitter_id = transmitter_id,
+            scientific_name = species_scientific_name,
+            common_name = species_common_name,
+            tag_project_name = tagging_project_name,
+            release_id = transmitter_deployment_id,
+            release_latitude = transmitter_deployment_latitude,
+            release_longitude = transmitter_deployment_longitude,
+            ReleaseDate = transmitter_deployment_datetime,
+            tag_expected_life_time_days = transmitter_estimated_battery_life,
+            tag_status = transmitter_status,
+            sex = animal_sex,
+            measurement = measurement_value)
+
+station_info <-
+  station_info %>% 
+  transmute(station_name = station_name,
+            receiver_name = receiver_name,
+            installation_name = installation_name,
+            project_name = receiver_project_name,
+            deploymentdatetime_timestamp = receiver_deployment_datetime,
+            recoverydatetime_timestamp = receiver_recovery_datetime,
+            station_latitude = receiver_deployment_latitude,
+            station_longitude = receiver_deployment_longitude,
+            status = active)
+```
+
+<br>
+
+Explore these datasets and see if the columns line up with the correct data. We can now setup the data so that **VTrack** can then read and analyse
+data properly
+
+```{r, eval = FALSE}
+input_data <- setupData(Tag.Detections = detections,
+                        Tag.Metadata = tag_metadata,
+                        Station.Information = station_info,
+                        source = "IMOS",
+                        crs = sp::CRS("+init=epsg:4326"))
+
+summary(input_data)
+```
+
+<br>
+
+The setup data is now a list containing all the components of data required for analyses. You can access each component seperately by selecting each
+component of the list
+
+```{r, eval = FALSE}
+input_data$Tag.Detections
+
+input_data$Tag.Metadata
+
+input_data$Station.Information
+```
+
+
+<br>
+
+##### 3.1.2 Examine patterns in detection and dispersal
+
+We can start by creating simple detection plots and maps to look at patterns of detection and get more familiar with your data
+
+```{r, eval = FALSE}
+## use the VTrack function for a simple abacus plot
+abacusPlot(input_data)
+```
+![](Images/VTrack/vtrack_1.png)
+
+<br>
+
+Instead of this simple output, you can also plot your own version of the abacus plot and include more details
+
+```{r, eval = FALSE}
+## plot your own!
+combined_data <- 
+  input_data$Tag.Detections %>% 
+  left_join(input_data$Station.Information)
+
+combined_data %>% 
+  mutate(date = date(Date.Time)) %>% 
+  group_by(Transmitter, Station.Name, date, Installation) %>% 
+  summarise(num_detections = n()) %>% 
+  ggplot(aes(x = date, y = Transmitter, size = num_detections, color = Installation)) +
+  geom_point() +
+  labs(size = "Number of Detections", color = "Installation Name") +
+  theme_bw()
+```
+
+![](Images/VTrack/vtrack_2.png)
+
+<br>
+
+You can also map the data to explore spatial patterns
+
+```{r, eval = FALSE}
+## Map the data
+combined_data %>% 
+  group_by(Station.Name, Latitude, Longitude, Transmitter, Installation) %>% 
+  summarise(num_detections = n()) %>% 
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>% 
+  mapview(cex = "num_detections", zcol = "Installation")
+```
+![](Images/VTrack/vtrack_3.png)
+
+
+<br>
+
+We can now use the *`detectionSummary()`* and *`dispersalsSummary()`* functions to calculate overall and monthly subsetted detection and dispersal
+metrics
+
+```{r, eval = FALSE}
+## Summarise detections patterns
+det_sum <- detectionSummary(ATTdata = input_data, sub = "%Y-%m")
+
+summary(det_sum)
+```
+
+<br>
+
+Here we have set the `sub` parameter to `%Y-%m` (monthly subset), weekly subsets can also be calculated using `%Y-%W`. The function calculates Overall
+metrics as well as subsetted metrics, you can access them by selecting each component of the list output.
+
+```{r, eval = FALSE}
+det_sum$Overall
+det_sum$Subsetted
+```
+
+<br>
+
+We can then plot the results to have a look at monthly patterns in detection index between sexes of bull sharks tracked throughout the project
+
+```{r, eval = FALSE}
+monthly_detection_index <-
+  det_sum$Subsetted %>% 
+  mutate(date = lubridate::ymd(paste(subset, 01, "-")),
+         month = month(date, label = T, abbr = T)) %>% 
+  group_by(Sex, month) %>% 
+  summarise(mean_DI = mean(Detection.Index),
+            se_DI = sd(Detection.Index)/sqrt(n()))
+
+monthly_detection_index %>% 
+  ggplot(aes(x = month, y = mean_DI, group = Sex, color = Sex,
+             ymin = mean_DI - se_DI, ymax = mean_DI + se_DI)) +
+  geom_point() +
+  geom_path() +
+  geom_errorbar(width = 0.2) +
+  labs(x = "Month of year", y = "Mean Detection Index") +
+  theme_bw()
+```     
+
+![](Images/VTrack/vtrack_4.png)
+<br>
+
+Similarly, we can use the *`dispersalSummary()`* function to do the same analysis to understand how dispersal distances moved by individuals change
+over the year for each sex of bull shark.
+
+```{r, eval = FALSE}
+## Summarise dispersal patterns
+disp_sum <- dispersalSummary(ATTdata = input_data)
+
+disp_sum
+
+monthly_dispersal <-
+  disp_sum %>% 
+  mutate(month = month(Date.Time, label = T, abbr = T)) %>% 
+  group_by(Sex, month) %>% 
+  summarise(mean_disp = mean(Consecutive.Dispersal),
+            se_disp = sd(Consecutive.Dispersal)/sqrt(n()))
+
+monthly_dispersal %>% 
+  ggplot(aes(x = month, y = mean_disp, group = Sex, color = Sex,
+             ymin = mean_disp - se_disp, ymax = mean_disp + se_disp)) +
+  geom_point() +
+  geom_path() +
+  geom_errorbar(width = 0.2) +
+  labs(x = "Month of year", y = "Mean Dispersal distance (m)") +
+  theme_bw()
+```     
+![](Images/VTrack/vtrack_5.png)
+
+<br>
+
+Like I mentioned above, since we have limited time to go through all the features of **VTrack** today, please go have a look
+[here](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html) to go through a more in-depth example of how the package can be used to calculate
+and visualise activity space estimates for large acoustic telemetry datasets.
+
+<br> <br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<br>
+
+#### 3.2 Using the *re**mo**ra* R package to interactivley explore your telemetry data
+
+For this part of the session, we will go through some of the functionality of the new *re**mo**ra* package. This package was created to assist users of the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) to easily explore and analyse their data. The intention is that data exported and downloaded from the web portal can feed directly into the package to do quick analyses. The package also enables the integration of animal telemetry data with oceanographic observations collected by IMOS and other ocean observing programs. The package includes functiosn that: 
+
+- Interactively explore animal movements in space and time from acoustic telemetry data
+- Perform robust quality-control of acoustic telemetry data using the method described by [Hoenner et al. 2018](https://www.nature.com/articles/sdata2017206)
+- Identify available remote sensed and sub-surface, in-situ oceanographic datasets that spatially and temporally overlap animal movement data
+- Once identified, the package assists in extracting and appending these variables to the movement data
+
+<br>
+
+The package follows the following rough workflow to enable project reporting, data quality control and environmental data extraction:
+
+![](Images/remora_workflow.png)
+
+<br>
+
+The package can be installed from Github:
+
+```{r, eval = FALSE}
+## Install packages
+install.packages("remotes")
+remotes::install_github("IMOS-AnimalTracking/remora", build_vignettes = TRUE)
+
+```
+
+Once downloaded you can explore the functionality of the package using vignettes that describe the different functions
+
+```{r, eval = FALSE}
+library(remora)
+browseVignettes(package = "remora")
+```
+
+<br>
+
+Lets load other useful packages for this session
+
+```{r, eval = FALSE}
+library(tidyverse)
+library(sf)
+library(mapview)
+library(ggspatial)
+```
+
+<br>
+
+Now we can use one of the main functions of the package `shinyReport()` to interactively explore data. 
+
+We can use this function to create a report based on your receiver data or transmitter data. Both these reports produce lots of interesting metrics and maps to explore your data in depth.
+
+```{r, eval = FALSE}
+## Create and explore a receiver array report
+shinyReport(type = "receivers")
+
+## Create and explore a transmitter report
+shinyReport(type = "transmitters")
+```
+
+![](Images/shinyreport.png)
+
+<br>
+
+For more information on these functions check out the vignette in the remora package
+
+```{r, eval = FALSE}
+vignette("shinyReport_receivers", package = "remora")
+vignette("shinyReport_transmitters", package = "remora")
+```
+
+<br>
+
+
+##### 3.2.1 Undertaking Quality control checks on your raw detection data
+
+We an now use the functionality of *re**mo**ra* to conduct quality control checks with our **IMOS Workshop_Bull-shark-sample-dataset** in the data folder.
+
+For the package to find all the data in the correct place, we will make a list of locations of where all our particular files live on your computer.
+
+```{r, eval = FALSE}
+files <- list(det = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv",
+              rmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv",
+              tmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv",
+              meas = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv")
+
+files
+```
+
+<br>
+
+We can now use the `runQC()` function to conduct a comprehensive quality control algorithm
+
+
+```{r, eval = FALSE}
+tag_qc <- runQC(x = files, .parallel = TRUE, .progress = TRUE)
+```
+
+<br>
+
+After running this code, each detection will have additional columns appended to it. These columns provide the results of each of 7 quality check conducted during this step. The QC algorithm tests 7 aspects of the detection data and grades each test as per below. An overall `Detection_QC` value is then calculated to provide rankings of **1:** ***valid***; **2:** ***likely valid***; **3:** ***unlikely valid***; or **4:** ***invalid detection***
+
+![](Images/QC/qc_tab.png)
+<br>
+
+You can now access each component of the results of the QC process using the `grabQC()` function
+
+```{r, eval = FALSE}
+## this will only grab the QC flags resulting from the algorithm
+grabQC(tag_qc, what = "QCflags")
+
+## this will extract all the relevant data as well as only detections that were deemed `valid` and `likely valid`
+qc_data <- grabQC(tag_qc, what = "dQC", flag = c("valid", "likely valid"))
+qc_data
+```
+
+<br>
+
+We can now visualise the QC detection process, mapping detections and their resulting QC flags
+
+```{r, eval = FALSE}
+plotQC(tag_qc)
+```
+
+![](Images/QC/Bull_Shark_QC.png)
+
+<br>
+
+For more information on these functions check out the vignette in the remora package
+
+```{r, eval = FALSE}
+vignette("runQC", package = "remora")
+```
+
+<br>
+
+##### 3.2.2 Extracting and appending environmental variables to acoustic telemetry data
+
+We can also use *re**mo**ra* to identify environmental data (currently only within Australia) that overlap (spatially and temporally) with your animal telemetry data.
+The full list of variables you can access and append directly from R can be found using the `imos_variables()` function.
+
+```{r, eval = FALSE}
+imos_variables()
+```
+
+<br>
+
+###### Remote sensed environmental variables
+
+All the variables prefixed with `rs_` in the resulting table are rasterised remote sensed data that can be accessed. We can access and extract rasterised remote sensed data using the `extractEnv()` function
+
+For this example, lets use a smaller subset of the example dataset so we dont have to wait to download heaps of environmental data.
+
+```{r, eval = FALSE}
+subsetted_data <- 
+  qc_data %>%
+  filter(installation_name %in% c("IMOS-ATF Coffs Harbour line"))
+```
+
+<br>
+
+We will use the function to extract modelled (interpolated) Sea surface temperature (`rs_sst_interpolated`) across a subset of the bull shark data detected at the Coffs Harbour Line. This function requires at the very least coordinates and a timestamp (*X*, *Y* and *datetime* parameters) to run. The function is therefore not restricted to acoustic telemetry data only, and can be used for other spatial data from satellite tags or even occurrence data.
+
+```{r, eval = FALSE}
+sst_extract <-
+  extractEnv(df = extracted_data,
+             X = "receiver_deployment_longitude", 
+             Y = "receiver_deployment_latitude", 
+             datetime = "detection_datetime",
+             env_var = "rs_sst_interpolated",
+             cache_layers = TRUE,
+             crop_layers = TRUE,
+             full_timeperiod = FALSE,
+             folder_name = "sst",
+             .parallel = TRUE)
+```
+
+Explore the resulting data frame. It will have an additional column with the appended data
+
+```{r, eval = FALSE}
+sst_extract$rs_sst_interpolated
+```
+
+<br>
+
+We can now plot the detections along with the appended SST data that can be used for further analysis
+
+```{r, eval = FALSE}
+## plot SST data with detection data
+summarised_data <-
+  sst_extract %>% 
+  mutate(date = as.Date(detection_datetime)) %>% 
+  group_by(transmitter_id, date) %>% 
+  summarise(num_det = n(),
+            mean_sst = mean(rs_sst_interpolated, na.rm = T))
+
+ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color = mean_sst)) +
+  geom_point() +
+  scale_color_viridis_c() +
+  labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
+       y = NULL, color = "SST (˚C)", size = "Number of\nDetections") +
+  theme_bw()
+```
+
+<br>
+
+This workshop covers only the basics of this function. To learn more features including gap filling and buffering functionality check out the function vignette
+
+```{r, eval = FALSE}
+vignette("extractEnv", package = "remora")
+```
+
+<br>
+
+###### In-situ data from mooring data from the IMOS National Mooring Network
+
+If sub-sea variables are of interest, then the *re**mo**ra* package can be used to access, extract and append data from the nearest Oceanographic mooring deployed by the IMOS National Mooring Network. This can be done using the `extractMoor()` function. But before using this, we need to find the moorings that would be most relevant.
+
+<br>
+
+Lets use the full example dataset to see which moorings would be the closest and provide in-situ temperature data.
+We can access the metadata for all moorings that record temperature data
+
+
+```{r, eval = FALSE}
+moor_temp <- mooringTable(sensorType = "temperature")
+```
+
+we can now map the full network
+
+<br>
+
+```{r, eval = FALSE}
+moor_temp %>% 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>% 
+  mapview(popup = paste("Site code", moor_temp$site_code,"<br>",
+                        "URL:", moor_temp$url, "<br>",
+                        "Standard names:", moor_temp$standard_names, "<br>",
+                        "Coverage start:", moor_temp$time_coverage_start, "<br>",
+                        "Coverage end:", moor_temp$time_coverage_end),
+          col.regions = "red", color = "white", layer.name = "IMOS Mooring")
+```
+
+![](Images/Mooring data/moorMap.png)
+
+
+<br>
+
+
+We can now find the closest mooring to our animal detections in both space (using the `getDistance()` function) and time (using the `getOverlap()` function)
+
+```{r, eval = FALSE}
+# identify nearest mooring in space
+det_dist <- getDistance(trackingData = qc_data,
+                        moorLocations = moor_temp,
+                        X = "receiver_deployment_longitude",
+                        Y = "receiver_deployment_latitude",
+                        datetime = "detection_datetime")
+
+# identify moorings that have overlapping data with detections
+mooring_overlap <- getOverlap(det_dist)
+
+# only select moorings with 100% temporal overlap (Poverlap = 1)
+mooring_overlap <-
+  mooring_overlap %>% 
+  filter(Poverlap == 1)
+```
+
+<br>
+
+Now that we have identified the moorings to extract data from we can run the `mooringDownload()` and `moorExtract()` functions
+
+```{r, eval = FALSE}
+## Download mooring data from closest moorings
+moorIDs <- unique(mooring_overlap$moor_site_code)
+
+moor_data <- mooringDownload(moor_site_codes = moorIDs,
+                             sensorType = "temperature",
+                             fromWeb = TRUE,
+                             file_loc = "imos.cache/moor/temperature")
+```
+
+<br>
+
+We can now visualise the temperature profile data alongside the animal detection data for a temporal subset of the data
+
+```{r, eval = FALSE}
+## Plot depth time of temperature from one mooring along with the detection data
+start_date <- "2020-01-01"
+end_date <- "2020-02-01"
+
+plotDT(moorData = moor_data$CH050, 
+       moorName = "CH050",
+       dateStart = start_date, dateEnd = end_date,
+       varName = "temperature",
+       trackingData = det_dist,
+       speciesID = "Carcharhinus leucas",
+       IDtype = "species_scientific_name",
+       detStart = start_date, detEnd = end_date)
+```
+![](Images/Mooring data/plotDT.png)
+
+<br>
+
+
+Like the other functions of *re**mo**ra* we have covered quickly above, there is far more functionality that we just dont have time to cover here. 
+To learn more features including accessing and appending other data and at specific depths check out the function's vignette
+
+```{r, eval = FALSE}
+vignette("extractMoor", package = "remora")
+```
+
+
+
+
+<br><br>
+<br><br>
+<br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Signoff!
+
+This is where we end our R workshop! There may have been a few bits of code that you had trouble with or need more time to work through. We encourage
+you to discuss these with us as well as others at the workshop to help get a handle on the R code.
+
+<br>
+
+If you have any comments or queries reguarding this workshop feel free to contact us:
+
+-   Dr. Vinay Udyawer: [v.udyawer\@aims.gov.au](mailto:v.udyawer@aims.gov.au){.email}
+-   Dr. Yuri Niella: [yuri.niella\@mq.edu.au](mailto:yuri.niella@mq.edu.au%7B.email%7D)
+
+**Happy Tracking!**
+
+
+<br><br><br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+![](Images/Sponsors.png)
