@@ -31,12 +31,7 @@ htmltools::img(src =knitr::image_uri('Images/banner1.png'),
 
 ## Introductions
 
-### Who are we?
-
-**Yuri** is a Research Fellow at the Marine Predator Research Group at Macquarie University (Sydney). He is interested in trophic and spatial ecology
-of marine animals, particularly sharks, in relation to anthropogenic threats such as fishing, habitat loss and climate change. He is the developer of
-the [RSP](https://github.com/YuriNiella/RSP) **R** package to analyse the movements of animals tracked with acoustic transmitters accounting for
-complex topography. You can read more about RSP in [Niella et al. 2020](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13484).
+### Who am I?
 
 **Vinay** is a Research Scientist at the [Australian Institute of Marine Science](https://www.aims.gov.au/). He is an ecologist that is particularly
 interested in using spatio-temporal datasets to understand animal movements and distributions patterns. He has considerable experience using **R** to
@@ -52,14 +47,14 @@ page](https://github.com/vinayudyawer).
 demonstrate how **R** can make the processing of spatial data much quicker and easier than using standard GIS software! At the end of this workshop
 you will also have the annotated **R** code that you can re-run at any time, share with collaborators and build on with those newly acquired data!
 
-We designed this course not to comprehensively cover all the tools in **R**, but rather to give you an understanding of options on how to analyse your
-acoustic telemetry data. Every new project comes with its own problems and questions and you will need to be independent, patient and creative to
+I designed this course not to comprehensively cover all the tools in **R**, but rather to give you an understanding of options on how to analyse your
+telemetry data (both from satellite and acoustic tags). Every new project comes with its own problems and questions and you will need to be independent, patient and creative to
 solve these challenges. It makes sense to invest time in becoming familiar with **R**, because today **R** is the leading platform for environmental
 data analysis and has some other functionalities which may surprise you!
 
 <br>
 
-This **R** workshop is intended to run for about 2.5 hours and will be divided into 3 sessions.
+This **R** workshop is intended to run for two  and will be divided into 3 sessions.
 
 <br>
 
