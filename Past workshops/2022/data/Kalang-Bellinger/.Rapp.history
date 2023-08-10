@@ -1,0 +1,270 @@
+---#
+title: Innovasea and IMOS ATF Acoustic Tracking Workshop#
+subtitle: Surfers Paradise 2022#
+author: Dr Vinay Udyawer & Dr Yuri Niella #
+date: Nov 6, 2022#
+output:#
+  html_document:#
+    toc: true#
+    toc_float: true #
+    depth: 5#
+    number_sections: false#
+    theme: spacelab#
+    highlight: pygments#
+editor_options: #
+  markdown: #
+    wrap: 72#
+---#
+#
+```{r, echo=FALSE}#
+htmltools::img(src =knitr::image_uri('Images/IMOS-Innovasea.jpeg'),#
+               alt = 'logo', #
+               style = 'position:absolute; top:0; right:0; padding:10px;')#
+```#
+#
+<br> <br>#
+#
+------------------------------------------------------------------------#
+#
+# Introductions#
+#
+<br>#
+#
+## Who are we?#
+#
+Yuri intro..#
+#
+<br>#
+#
+Vinay is a Research Scientist at the [Australian Institute of Marine#
+Science](https://www.aims.gov.au/). He is an ecologist that is#
+particularly interested in using spatio-temporal datasets to understand#
+animal movements and distributions patterns. He has considerable#
+experience using **R** to analyse and visualise large and complex#
+spatial datasets. He has developed **R** code and packages to analyse 2#
+and 3 dimensional movement patterns of animals using acoustic telemetry#
+data from single study sites to continental scale arrays. Vinay's **R**#
+codes can be found on his [github page](https://github.com/vinayudyawer)#
+#
+<br>#
+#
+## Course outline#
+#
+**In this course you will learn how to analyse and interpret your#
+aquatic telemetry datasets in R**. This workshop will demonstrate how#
+**R** can make the processing of spatial data much quicker and easier#
+than using standard GIS software, and can help you plot some *deadly*#
+figures! At the end of this workshop you will also have the annotated#
+**R** code that you can re-run at any time, share with collaborators and#
+build on with those newly acquired data!#
+#
+We designed this course not to comprehensively cover all the tools in#
+**R**, but rather to teach you skills for taking your experience with#
+**R** to the next level. Every new project comes with its own problems#
+and questions and you will need to be independent, patient and creative#
+to solve these challenges. It makes sense to invest time in becoming#
+familiar with **R**, because today **R** is the leading platform for#
+environmental data analysis and has some other functionalities which may#
+surprise you!#
+#
+<br>#
+#
+This **R** workshop will be divided into 4 sessions intended to run#
+about 1 hr 15 mins each.#
+#
+<br>#
+#
+-   Session 1: *Getting familiar with input data formats*#
+#
+1.  **Fathom** input data format#
+2.  **VUE** input data format#
+3.  **IMOS-ATF** input data format#
+4.  *Converting* between formats to use with specific R packages#
+#
+<br>#
+#
+-   Session 2: *Working with actel and RSP*#
+#
+1.  #
+2.  #
+3.  #
+#
+<br>#
+#
+-   Session 3: *Working with VTrack and remora*#
+#
+1.  #
+2.  #
+3.  #
+#
+<br>#
+**The main principles we hope you will learn today are...**#
+#
+-   Data wrangling in **R** is safe, fast, reliable and repeatable#
+-   **R** can easily handle large datasets#
+-   **R** is the ideal suite for performing your GIS operations#
+-   that in **R**, it is easy to produce amazing publication-ready#
+    images#
+#
+<br> <br>#
+#
+## Course Resources#
+#
+To access data and scripts we will work through in this course, download#
+the **Innovasea-IMOS workshop 2022** folder from#
+[GitHub](). This#
+folder contains the course documents, telemetry data and R scripts we#
+are going to work with. To download the folder click on the green [Clone#
+or download]{style="color:green"}, dropdown menu and select "Download#
+ZIP"#
+#
+![](Images/github_download.png)#
+#
+Once downloaded, the workshop folder contains the following sub folders:#
+#
+1.  Data#
+2.  Documents#
+3.  GIS#
+#
+<br>#
+#
+First unzip this folder and extract the folder to a location on your#
+computer that you typically store your research files.#
+#
+To link with these folders, we are going to use the `Project`#
+functionality of R Studio.#
+#
+First, open the R Studio program on your computer and in the TOP LEFT#
+corner of the R Studio window, click *File \> New Project...*.#
+#
+Next, create a New Project using the *Create Project* command (available#
+on the Projects menu and on the global toolbar):#
+#
+![](Images/RStudio_newproj.png)#
+#
+Select **Existing Directory** then save the project within the#
+"Animals-in-Motion-2018" folder.#
+#
+When a *New Project* is created, R Studio:#
+#
+1.  Creates a Project file (with an **.Rproj** extension) within the#
+    project directory. This file contains various project options#
+    (discussed below) and can also be used as a shortcut for opening the#
+    project directly from the file system.#
+2.  Creates a hidden directory (named **.Rproj.user**) where#
+    project-specific temporary files (e.g. auto-saved source documents,#
+    window-state, etc.) are stored.#
+3.  Loads the project into R Studio and display its name in the Projects#
+    toolbar (which is located on the far right side of the main toolbar#
+    (very TOP RIGHT of the R Studio window).#
+#
+<br>#
+------------------------------------------------------------------------#
+#
+# Session 1: Getting familiar with input data formats#
+<br>#
+------------------------------------------------------------------------#
+#
+# Session 2: Working with actel and RSP#
+<br>#
+------------------------------------------------------------------------#
+#
+# Session 3: Working with VTrack and remora#
+<br>#
+------------------------------------------------------------------------#
+#
+------------------------------------------------------------------------#
+#
+# Signoff!#
+#
+This is where we end our R workshop! There may have been a few bits of#
+code that you had trouble with or need more time to work through. We#
+encourage you to discuss these with us as well as others at the workshop#
+to help get a handle on the R code.#
+#
+<br>#
+#
+If you have any comments or queries reguarding this workshop feel free#
+to contact us:#
+#
+-   Dr. Vinay Udyawer:#
+    [v.udyawer\@aims.gov.au](mailto:v.udyawer@aims.gov.au){.email}#
+-   Dr. Yuri Niella:#
+    [](mailto:){.email}#
+**Happy Tracking!**#
+#
+<br>
+library(tidyverse)#
+library(actel)#
+library(RSP)#
+library(sf)#
+library(raster)#
+library(ozmaps)#
+library(patchwork)#
+library(geosphere)#
+library(cmocean)
+setwd("data/Kalang-Bellinger")#
+exp.results <- explore(tz = 'Australia/Sydney', report = FALSE, GUI = 'never')#
+n#
+n#
+#-------------------------------------##
+# 2. Refining in-water paths with RSP ##
+#-------------------------------------##
+#
+# Load land shapefile#
+water <- loadShape(path = "shapefile/", shape = "Kalang-Bellinger.shp", #
+  size = 0.0001, # Pixel size for the rendered raster (shapefile units)#
+  buffer = 0.01) # Water area buffer su
+tl <- transitionLayer(x = water, directions = 8)#
+# save(tl, file = "tl.RData") # Export transition layer #
+#
+# Create in-water tracks#
+rsp.run <- runRSP(input = exp.results, t.layer = tl, verbose = TRUE,#
+  coord.x = "Longitude", coord.y = "Latitude", #
+  er.ad = 2, # Location error increment (metres)#
+  max.time = 24) # Temporal interval separating new tracks (24 hours = default)#
+names(rsp.run) # runRSP outputs
+names(rsp.run$detections) # Output saved separated for each tag
+head(rsp.run$detections$'A69-9001-18784', 20)
+head(rsp.tracks)
+mouth <- c(153.031006, -30.501217) # River mouth location
+rsp.tracks <- do.call(rbind.data.frame, rsp.run$detections) # Extract all shark RSP tracks
+summary(rsp.tracks)
+citation("RSP")
+load("dBBMM2.RData")
+head(dbbmm.time$timeslots) # Timeslot metadata
+head(areas.group$areas$F) # Space-use size areas (m2)
+areas.group$areas$F$Date <- dbbmm.time$timeslots$start[match(areas.group$areas$F$Slot, #
+  as.character(dbbmm.time$timeslots$slot))] # Match Female timeslots to date variable
+load("dBBMM2.RData")
+load("dBBMM2.RData")
+areas.group <- getAreas(input = dbbmm.time, breaks = c(0.5, 0.95), # 50% and 95% contours (default)#
+  type = "group") # for individual areas use type = "track"
+head(areas.group$areas$F) # Space-use size areas (m2)
+areas.group$areas$F$Date <- dbbmm.time$timeslots$start[match(areas.group$areas$F$Slot, #
+  as.character(dbbmm.time$timeslots$slot))] # Match Female timeslots to date variable
+areas.group$areas$F$Group <- "F" # Add group information (Females)
+areas.group$areas$M$Date <- dbbmm.time$timeslots$start[match(areas.group$areas$M$Slot, #
+  as.character(dbbmm.time$timeslots$slot))] # Match Male timeslots to date variable
+areas.group$areas$M$Group <- "M" # Add group information (Male)
+plot.areas <- rbind(areas.group$areas$F, areas.group$areas$M)
+plot.areas
+ggplot() + theme_bw() +#
+  geom_line(data = plot.areas, aes(x = Date, y = area.95 / 1000, colour = Group)) +#
+  labs(y = expression(paste('95% contour area (',km^2,')')))
+ggplot() + theme_bw() +#
+  geom_line(data = plot.areas, aes(x = Date, y = area.95 / 1000, colour = Group)) +#
+  labs(y = expression(paste('95% contour area (',km^2,')')))
+overlap.save <- getOverlaps(input = areas.group)
+names(overlap.save) # Overlaping area info + raw rasters
+names(overlap.save$areas) # List by dBBMM contour
+names(overlap.save$areas$'0.95') # Values in m2 and %
+names(overlap.save$areas$'0.95'$absolutes) # List by timeslot
+overlap.save$areas$'0.95'$absolutes[9] # m2
+overlap.save$areas$'0.95'$percentage[9] # %
+plotOverlaps(overlaps = overlap.save, areas = areas.group, base.raster = water, #
+  groups = c("M", "F"), timeslot = 9, level = 0.95)
+?getAreaStep
+df.step <- read.csv("dBBMM_data.csv")
+head(df.step)
+tail(df.step)

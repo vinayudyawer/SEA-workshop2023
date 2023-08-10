@@ -1,0 +1,10 @@
+Station.name,Latitude,Longitude,Array,Section,Type,Range
+Kalang 1,-30.48,153.03,Kalang-Bellinger Array,Kalang-Bellinger Array,Hydrophone,200
+Kalang 2,-30.48,153.02,Kalang-Bellinger Array,Kalang-Bellinger Array,Hydrophone,200
+Kalang 3,-30.49,153.03,Kalang-Bellinger Array,Kalang-Bellinger Array,Hydrophone,200
+Kalang 4,-30.49,153.01,Kalang-Bellinger Array,Kalang-Bellinger Array,Hydrophone,200
+-30.45_153.01,-30.45,153.01,Kalang-Bellinger Array,Kalang-Bellinger Array,Release,
+-30.45_153.03,-30.45,153.03,Kalang-Bellinger Array,Kalang-Bellinger Array,Release,
+-30.46_152.99,-30.46,152.99,Kalang-Bellinger Array,Kalang-Bellinger Array,Release,
+-30.49_153.02,-30.49,153.02,Kalang-Bellinger Array,Kalang-Bellinger Array,Release,
+-30.49_153.03,-30.49,153.03,Kalang-Bellinger Array,Kalang-Bellinger Array,Release,
