@@ -17,7 +17,7 @@ editor_options:
 ---
 
 ```{r, echo=FALSE}
-htmltools::img(src =knitr::image_uri('Images/banner1.png'),
+htmltools::img(src =knitr::image_uri('images/banner1.png'),
                alt = 'logo', 
                style = 'position:center; top:0; left:0; padding:0px;')
 ```
@@ -113,7 +113,7 @@ green **[Code]{style="color:green"}**, dropdown menu and select **"Download ZIP"
 ### Getting familiar with input data formats
 |                          |
 |:-------------------------|
-| ![](Images/Receiver.gif) |
+| ![](images/Receiver.gif) |
 
 Currently there are several data management tools that are extremely useful in storing, cleaning, exploring and analysing data obtained using Acoustic
 Telemetry. One that everyone here may be familiar with is the ***VUE*** software that you have been using to communicate with your Innovasea receivers
