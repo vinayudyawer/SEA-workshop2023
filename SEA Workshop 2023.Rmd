@@ -96,7 +96,7 @@ This **R** workshop is intended to run across 4 sessions.
 ### Course Resources
 
 The course resources will be emailed to you prior to the workshop. However, you can also access the data and scripts we will work through in this
-course, download the course resources from the **IMOS-AnimalTracking** [GitHub](https://github.com/IMOS-AnimalTracking/Innovasea-IMOS-Workshop-2022)
+course, download the course resources from this [GitHub repository](https://github.com/vinayudyawer/SEA-workshop2023)
 page. This page contains the course documents, telemetry example data and R scripts we are going to work with. To download the folder click on the
 green **[Code]{style="color:green"}**, dropdown menu and select **"Download ZIP"**
 
