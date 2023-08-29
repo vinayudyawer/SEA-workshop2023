@@ -1,0 +1,10 @@
+Date Requested: 2022-10-13 01:49:22 (UTC)
+
+startDate=
+endDate=
+taggingProject=NSW DPI (Whaler, White and Tiger Shark Program)
+receiverDeploymentProject=
+installation=
+station=
+species=
+transmitter=A69-9001-18831,A69-9001-18829,A69-9001-18784,A69-9001-18757,A69-9001-18755,A69-9001-18753,A69-9001-14270,A69-9001-14269,A69-9001-14263,A69-9001-14230,A69-9001-12551,A69-9001-12279,A69-9001-12950,A69-9001-18767,A69-9001-20473
