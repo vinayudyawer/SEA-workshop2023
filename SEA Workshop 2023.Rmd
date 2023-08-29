@@ -1,7 +1,7 @@
 ---
-title: 
+title:
 subtitle: 
-author: 
+author:
 date:
 output:
   html_document:
@@ -59,10 +59,10 @@ This **R** workshop is intended to run across 3 sessions.
 
 -   **Session 1:** *Getting familiar with R and spatial data*
 
-0.  A brief introduction to **R**
-1.  **Import** and **explore** datasets using %pipes% and the [*tidyverse*](http://tidyverse.org/) group of **R** packages
-2.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/) **R** package
-3.  Generating interactive maps using [*mapview*](https://r-spatial.github.io/mapview/)
+1.  A brief introduction to **R**
+2.  **Import** and **explore** datasets using %pipes% and the [*tidyverse*](http://tidyverse.org/) group of **R** packages
+3.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/) **R** package
+4.  Generating interactive maps using [*mapview*](https://r-spatial.github.io/mapview/)
 
 <br>
 
@@ -143,9 +143,12 @@ the wider community, the more powerful **R** becomes!
 **For this course, we assume you have a basic understanding of the *R* environment, and working with [*RStudio*](https://posit.co/products/open-source/rstudio/)**
 
 
+br>
+
+#### 1.1. Analysing bull shark movements in an estuarine system
 
 
-
+<br>
 
 
 
