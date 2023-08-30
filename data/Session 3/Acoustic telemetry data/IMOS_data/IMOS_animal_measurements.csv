@@ -1,0 +1,4 @@
+transmitter_id,transmitter_deployment_id,measurement_type,measurement_value,measurement_unit,comments
+A69-9002-15946,58329280,FORK LENGTH,1960.0,mm,
+A69-9002-15940,58329141,FORK LENGTH,1900.0,mm,
+A69-9002-13736,77523145,TOTAL LENGTH,2190.0,mm,Tag# R5609
