@@ -84,7 +84,7 @@ This **R** workshop is intended to run across 3 sessions.
 
 1.  A brief introduction to **R**
 2.  **Import** and **explore** datasets using %pipes% and the [*tidyverse*](http://tidyverse.org/) group of **R** packages
-3.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/) and [*mapview*](https://r-spatial.github.io/mapview/) **R** packages
+3.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/), [*ggspatial*](https://paleolimbot.github.io/ggspatial/) and [*mapview*](https://r-spatial.github.io/mapview/) **R** packages
 
 <br>
 
@@ -473,7 +473,7 @@ blacktip %>%
 
 <br>
 
-**`mutate`
+**`mutate`**
 
 Adding and removing data to the data frame through a pipe
 ```{r}
@@ -487,7 +487,7 @@ head(blacktip)
 
 <br>
 
-**`lubridate`
+**`lubridate`**
 
 * `lubridate` is an easy way to convert date and time data into a form that **R** can recognise
 * Allows for calculation of durations and intervals between dates.
@@ -615,11 +615,120 @@ blacktip %>%
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-#### 1.3. Working with Spatial objects using the ***sf*** and ***mapview*** R packages
+#### 1.3. Working with Spatial objects using the ***sf***, ***ggspatial*** and ***mapview*** R packages
+
+![ ](Images/spatial_banner.png)
+
+<br>
+
+**R** offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the 
+exclusive domain of GIS software, using **R** can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger 
+analytic workflow.
+
+One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even within **R** 
+itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news is that just like the
+`tidyverse` package family, efforts are underway to standardize spatial data classes in **R**. 
+
+This movement is facilitated by `sf`, an important base package for spatial operations in **R**. It provides definitions for basic spatial classes (points, 
+lines, polygons, pixels, and grids) in an attempt to unify the way **R** packages represent and manage these sorts of data, and uses grammer that can be 
+integrated into `tidyverse` script. It also includes some core functions for creating and manipulating these data structures. The hope is that all spatial 
+**R** packages will use (or at least provide conversions to) the 'Spatial' data class and its derivatives, as now defined in the `sf` package. All else being
+equal, we favor **R** functions and packages that conform to the `sp` standard, as these are likely to provide the greatest future utility and durability.
+
+[Here](https://r-spatial.github.io/sf/) is a very useful style guide for coding using the `sf` package.
+
+<br>
+
+**Coordinate Reference Systems (CRS)**
+
+Central to working with spatial data, is that these data have a coordinate reference system (CRS) associated with it. Geographical CRS are expressed in degrees 
+and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length (meters) and a chosen position on the earth, as 
+well as the underlying ellipse, prime meridian and datum.
+
+Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess — this led to the collection by the ***European Petroleum Survey Group (EPSG)*** 
+of a geodetic parameter dataset.
+
+The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is 
+interfaced with R in the `rgdal` package, and the CRS is defined partly in the `proj` package and partly in `rgeos`.
+
+In the next step, we will convert our blacktip dataset (`blacktip`) into a spatial object and specify the CRS. We therefore need to refer to the correct CRS 
+information associated with the spatial data.
+
+For simplicity, each projection can be referred to by a unique ID from the ***European Petroleum Survey Group (EPSG)*** geodetic parameter dataset. You can find the 
+relevant EPSG code for your coordinate system from this [website](https://epsg.io). There, simply enter in a key word in the search box and select from 
+the list the correct coordinate system. There is a map image in the top right of the site to help you. 
+
+The equivalent EPSG code for WGS 84 is [**4326**](https://epsg.io/4326)
+
+
+##### The `sf` package
+
+The `sf` package makes it easy to convert any data frame into a spatial object which we can then plot and explore using other packages. The conversion from
+data frame to a spatial object can be done easily using the `st_as_sf()` function. Lets convert two data sets into spatial objects so we can plot them out.
+The main information we need to provide to convert it to a spatial object will be the names of the columns that denote the coordinates, and the CRS for the data.
+Our receiver coordinates, and hence detection coordinates, were recorded in the **WGS 84** geographic datum in decimal degrees, which is the equivalent EPSG code of **4326**.
+
+```{r, message=FALSE}
+library(sf)
+
+# Import datasets
+blacktip <- read_csv('Data/Session 1/Blacktip_ClevelandBay.csv')
+statinfo <- read_csv('Data/Session 1/Station_information.csv')
+
+cb_stations <- 
+  statinfo %>% 
+  filter(installation %in% "Cleveland Bay") %>% 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = F)
+
+blacktip_sf <-
+  blacktip %>% 
+  group_by(transmitter_name, station_name, longitude, latitude) %>% 
+  summarise(num_det = n()) %>% 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = F)
+
+
+```
+
+<br>
+
+Now if you look at the objects we have created, it should give you some information on what kind of spatial object it has created (`POINTS`),
+and it will provide information on what CRS has been assigned to the coordinate data set. The data itself should look very similar to a `tibble` object
+which should be familiar to you now. The addition of the `geometry` column should give you a hint that it is now a spatial point object.
+
+```{r}
+head(blacktip_sf)
+```
+
+<br>
+
+**Plotting a spatial object using `ggplot2`**
+
+Now that we have a spatial object, we can simply visualise it using the `ggplot2` package, and using the `geom_sf` aesthetic.
+
+```{r}
+
+ggplot(cb_stations) +
+  geom_sf()
+
+```
 
 
 <br>
 
+We can also now use other packages to help make very nice, publication ready maps. The [**`ggspatial`**](https://paleolimbot.github.io/ggspatial/articles/ggspatial.html) 
+package is a very useful package that allows to integrate basemaps to your plots. Adding basemaps means you can do more complex mapping
+without the need to import multiple shapefiles. These basemaps also include satellite imagery which means you can produce nice maps showing
+satellite or aerial imagery in the background.
+
+
+```{r}
+library(ggspatial)
+
+ggplot() +
+  layer_spatial(cb_stations)
+
+
+```
 
 <br><br><br><br>
 
