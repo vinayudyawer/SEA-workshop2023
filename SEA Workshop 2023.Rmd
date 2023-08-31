@@ -246,7 +246,7 @@ cb <-
   filter(installation %in% "Cleveland Bay") %>% 
   group_by(station_name, longitude, latitude) %>% 
   summarise(num_rec = n()) %>% 
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = F)
 
 bt <-
   blacktip %>% 
@@ -255,15 +255,16 @@ bt <-
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
 
 m <- 
-    mapview(cb, alpha.reg = 0, alpha = 1, color = "grey", map.types = "Esri.WorldImagery", legend = F, homebutton = F) +
-    mapview(bt, zcol = "transmitter_name", burst = T, legend = F, homebutton = F, alpha = 0, alpha.reg = 1)
+    mapview(cb, alpha.reg = 0, alpha = 1, color = "grey", map.types = "Esri.WorldImagery", legend = F, homebutton = F, cex = 5) +
+    mapview(bt, zcol = "transmitter_name", burst = T, legend = F, homebutton = F, alpha = 0, alpha.reg = 1, cex = 5)
 
 m@map %>% 
     addLayersControl(
         #baseGroups = c("Map","Satellite"),
         baseGroups = unique(blacktip$transmitter_name),
         options = layersControlOptions(collapsed = FALSE)) %>%
-    hideGroup(unique(blacktip$transmitter_name))
+    hideGroup(unique(blacktip$transmitter_name)) %>% 
+  setView(lng = 146.90097, lat = -19.20836, zoom = 11)
 
 ```
 
@@ -290,10 +291,8 @@ Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and
 
 A stable way to save your data is as a '.csv' file. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in Excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the 'Data' folder using a text editor, you will see it is just words, numbers and commas.
 
-<br>
+<br><br>
 
-
-##### The ***tidyverse***
 
 ![](images/tidyverse.png)
 
@@ -305,15 +304,16 @@ The [tidyverse](http://tidyverse.org/) is the collective name given to suite of 
 popular set of packages that share an underlying design philosophy, grammar, and data structure. You can learn more about all the features of these packages from 
 the free online course developed by the package creators [here](https://r4ds.hadley.nz).
 
+<br>
+
 ***Members of the tidyverse***
 
-broom, **dplyr**, forcats, **ggplot2**, haven, httr, hms, jsonlite, lubridate, magrittr, modelr, **purrr**, **readr**, readxl, **stringr**, **tibble**, rvest, **tidyr**, xml2
+readr, broom, **dplyr**, **forcats**, **ggplot2**, haven, httr, hms, jsonlite, lubridate, magrittr, modelr, **purrr**, **readr**, readxl, **stringr**, **tibble**, rvest, **tidyr**, xml2
 
-<br>
 
 The advantage of the `tidyverse` is that most of these packages (but not all!) can be loaded simultaneously using a single line of code
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE}
 library(tidyverse)
 ```
 
@@ -325,55 +325,109 @@ The advantage of a `tibble` database is that all the columns will be formatted c
 
 
 ```{r, message=FALSE}
-blacktip <- read_csv('Data/Blacktip_ClevelandBay.csv')
+blacktip <- read_csv('data/Session 1/Blacktip_ClevelandBay.csv')
 
 # You can also use read_csv to input data directly from a website URL
 blacktip <- read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv')
 
-blacktip
-```
-
-
-##### `lubridate`
-
-* `lubridate` is an easy way to convert date and time data into a form that **R** can recognise
-* Allows for calculation of durations and intervals between dates.
-* Recognises multiple date time formats and parses them to a standardised 'POSIX' format that **R** uses (`ymd` for dates; `ymd_hms` for date and time parsing)
-* These features are very important when working with spatio-temporal datasets like telemetry data
-
-Currently in our `blacktip` dataset the "Date.and/Time..UTC." column is recognised as "characters" and recorded in the Universal Coordinated Time Zone (UTC). Let's use `lubridate` to convert this column into the 'POSIX' format and into the local date time (i.e. UTC + 10 hours).
-
-```{r, eval=TRUE, message=FALSE}
-library(lubridate)
-blacktip$local.Date.time<- 
-  blacktip$`Date.and.Time..UTC.` %>%
-  ymd_hms(tz="UTC") %>% # first convert the `Date and Time (UTC)` column into a 'POSIX' format 
-  with_tz(tzone="Australia/Brisbane") # convert to local "Australia/Brisbane" date time (UTC + 10hrs)
+head(blacktip)
 ```
 
 <br>
 
-##### `dplyr`
+**Pipes `%>%`**
+
+![ ](Images/mario.png)
+
+<br>
+
+Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
+
+* Originally from the `magrittr` package but has been imported to the `tidyverse`.
+* `%>%` is an **infix operator**. This means it takes two operands, left and right.
+* 'Pipes' the **output** of the last expression/function (left) forward to the **first input** of the next funciton (right).
+
+```{r, eval = FALSE}
+# For example, to see what class our data is in, we could use this code...
+class(blacktip)
+
+# Alternatively in the tidyverse we could use this code...
+blacktip %>% class()
+```
+
+<br>
+
+***Benefits of pipes %>%***
+
+* Functions flow in natural order that tells story about data.
+* Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
+* Common style makes it easy to understand collaborator (or your own) code.
+
+
+We can have a quick look at the data by typing:
+
+```{r, eval = FALSE}
+# Now insert functions into the pipe chain
+blacktip %>% View()
+blacktip %>% head() # first 6 rows by default
+blacktip %>% tail(10) # specify we want to look at the last 10 rows
+```
+
+This functionality is particularly useful if the data is very large!
+
+Note the `()`, as opposed to the `[]` we used for indexing. The `()` signify a *function*.
+
+We can look at the data more closely using the `nrow()`, `ncol()`, `length()`, `unique()`, `str()` and `summary()` functions.
+
+```{r, eval=FALSE}
+blacktip %>% nrow() # number of rows in the data frame
+blacktip %>% ncol() # number of columns in the data frame
+blacktip %>% str() # provides internal structure of an R object
+blacktip %>% summary() # provides result summary of the data frame
+```
+```{r, eval=TRUE, results='hide'}
+# pipes can be used for single column within data frames
+blacktip$transmitter_name <-
+  blacktip$transmitter_name %>% as.factor()
+
+# pipes are used to conduct multiple functions on the dataset in a certain order
+blacktip %>% 
+  subset(transmitter_name == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  nrow() # number of rows (i.e. detections) from 'Colin'
+```
+
+Pipes can also be used to pre-process our data before plotting them. Lets now use pipes to plot a simple barplot of the number of Colins detections at each reciever.
+
+```{r, eval=TRUE}
+blacktip %>% 
+  subset(transmitter_name == "Colin") %>% # subset dataset to include only detections by 'Colin'
+  with(table(station_name)) %>% # create a table with the number of rows (i.e. detections) per receiver
+  barplot(las = 2, xlab = "Receiver station", ylab = "Number of Detections") # barplot of number of Colin's detections recorded per receiver
+```
+
+<br>
+
+**`dplyr`**
 
 * `dplyr` is the data wrangling workhorse of the tidyverse.
 * Provides functions, **verbs**, that can manipulate data into the shape you need for analysis.
 * Has many backends allowing `dplyr` code to work on data stored in SQL databases and big data clusters.
     - Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
 
-**Basic vocabulary**
+***Basic vocabulary***
 
 * `select()` columns from a tibble 
 * `filter()` to rows matching a certain condition
-* `mutate()` a tibble by changing or adding rows
 * `arrange()` rows in order
+* `mutate()` a tibble by changing or adding rows
 * `group_by()` a variable
 * `summarise()` data over a group using a function
 
-Check out this useful [Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling.
+Check out this useful online [cheatsheet](https://rstudio.github.io/cheatsheets/html/data-transformation.html?_gl=1*1osjb37*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..) for data wrangling.
 
 <br>
 
-##### `select`
+**`select`**
 
 We can use the `select` function in `dplyr` to choose the columns we want to include for our analyses and plotting
 
@@ -381,71 +435,92 @@ We can use the `select` function in `dplyr` to choose the columns we want to inc
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
-  select(local.Date.time, Latitude, Longitude, Receiver, Station.Name, Transmitter.Name, Transmitter, Sensor.Value) %>% # columns we want to include
-  select(-Sensor.Value) # the minus symbol denotes columns we want to drop
+  select(date_time, latitude, longitude, receiver, station_name, transmitter_name, transmitter, sensor_value) %>% # columns we want to include
+  select(-sensor_value) # the minus symbol denotes columns we want to drop
 
 head(blacktip)
 ```
 
 <br>
 
-##### `filter` and `arrange`
+**`filter` and `arrange`**
 
 We can use these functions to **subset the data** to rows matching logical conditions and then **arrange according to particular attributes**
 ```{r, eval=FALSE}
 blacktip %>%
-  filter(Transmitter.Name == "Ana") %>%
-  arrange(local.Date.time) # arrange Ana's detections in chronological order
+  filter(transmitter_name == "Ana") %>%
+  arrange(date_time) # arrange Ana's detections in chronological order
 
 blacktip %>%
-  filter(Transmitter.Name == "Bruce") %>%
-  arrange(desc(local.Date.time)) # arrange Bruce's detections in descending chronological order
+  filter(transmitter_name == "Bruce") %>%
+  arrange(desc(date_time)) # arrange Bruce's detections in descending chronological order
 ```
 
 <br>
 
-##### `group_by` and `summarise`
+**`group_by` and `summarise`**
 
 Determine the total number of detections for each tagged shark
 ```{r, eval=FALSE}
 blacktip %>%
-  group_by(Transmitter.Name) %>%
+  group_by(transmitter_name) %>%
   summarise(NumDetections = n()) # summarise number of detections per tagged shark
 
 blacktip %>%
-  group_by(Transmitter.Name, Receiver) %>%
+  group_by(transmitter_name, station_name) %>%
   summarise(NumDetections = n()) # summarise number of detections per shark at each receiver
 ```
 
 <br>
 
-##### `mutate`
+**`mutate`
 
 Adding and removing data to the data frame through a pipe
 ```{r}
 blacktip <- 
   blacktip %>%
-  mutate(date=date(local.Date.time)) %>% # adding a column to the blacktip data with date of each detection
-  mutate(Transmitter=NULL) # removing the `Transmitter` column
+  mutate(date = as.Date(date_time)) %>% # adding a column to the blacktip data with date of each detection
+  mutate(transmitter = NULL) # removing the `Transmitter` column
 
 head(blacktip)
 ```
 
 <br>
 
-## Data visualisation using `ggplot2`
+**`lubridate`
+
+* `lubridate` is an easy way to convert date and time data into a form that **R** can recognise
+* Allows for calculation of durations and intervals between dates.
+* Recognises multiple date time formats and parses them to a standardised 'POSIX' format that **R** uses (`ymd` for dates; `ymd_hms` for date and time parsing)
+* These features are very important when working with spatio-temporal datasets like telemetry data
+
+Currently in our `blacktip` dataset the "date_time" column is in the Universal Coordinated Time Zone (UTC). Let's use `lubridate` to convert this column into the 'POSIX' format and into the local date time (i.e. UTC + 10 hours).
+
+```{r, eval=TRUE, message=FALSE}
+library(lubridate)
+
+blacktip <-
+  blacktip %>% 
+  mutate(local_date_time = with_tz(date_time, tzone = "Australia/Brisbane")) %>% # convert to local "Australia/Brisbane" date time (UTC + 10hrs)
+  mutate(date = date(local_date_time)) # use lubridate to update local date time into a date field
+
+```
+
+<br>
+
+**Data visualisation using `ggplot2`**
 
 `ggplot2` is a powerful data visualization package for the **R** programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in **R** a hassle.
 
 The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
 
-Documentation for `ggplot2` can be found [here](http://ggplot2.org/) and [here](http://docs.ggplot2.org/current/index.html).
+Documentation for `ggplot2` can be found [here](https://ggplot2.tidyverse.org).
 
-There is also this awesome [Cheetsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for `ggplot2`
+There is also this awesome [cheetsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*hd7s9e*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..) for `ggplot2`
 
 <br>
 
-### `ggplot2` grammar
+***`ggplot2` grammar***
 
 The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. 
 
@@ -460,7 +535,7 @@ Building blocks of a graph include:
 * position adjustments
 * faceting
 
-#### Aesthetic Mapping
+***Aesthetic Mapping***
 
 In `ggplot2`, aesthetic means “something you can see”. Aesthetic mapping (i.e., with `aes()`) only says that a variable should be mapped to an aesthetic. 
 It doesn’t say how that should happen. For example, when mapping a variable to shape with `aes(shape = x)` you don’t say what shapes should be used. 
@@ -479,7 +554,7 @@ Each type of geom accepts only a subset of all aesthetics–refer to the geom he
 
 <br>
 
-#### Geometic Objects (geom)
+***Geometic Objects (geom)***
 
 Geometric objects are the actual marks we put on a plot. Examples include:
 
@@ -502,9 +577,9 @@ In the below script we call the data set we have just made (`blacktip`) and then
 library(ggplot2)   
 
 blacktip %>%
-  group_by(Transmitter.Name, date) %>% 
-  summarise(DailyDetections= n()) %>% # use summarise to calculate numbers of detections per day per animal
-  ggplot(mapping = aes(x = Transmitter.Name, y = DailyDetections)) + # define the aesthetic map (what to plot)
+  group_by(transmitter_name, date) %>% 
+  summarise(daily_detections = n()) %>% # use summarise to calculate numbers of detections per day per animal
+  ggplot(mapping = aes(x = transmitter_name, y = daily_detections)) + # define the aesthetic map (what to plot)
   xlab("Tag") + ylab("Number of detections per day") +
   geom_boxplot() # define the geometric object (how to plot it).. in this case a boxplot
 
@@ -516,9 +591,8 @@ We can adapt the above script to create an abacus plot using our `blacktip` data
 
 ```{r}
 blacktip %>%
-  ggplot(mapping = aes(x = local.Date.time, y = as.factor(Transmitter.Name))) + 
-  xlab("Date") + 
-  ylab("Tag") +
+  ggplot(mapping = aes(x = local_date_time, y = transmitter_name)) + 
+  xlab("Date") + ylab("Tag") +
   geom_point()
 ```
 
@@ -528,18 +602,13 @@ We can also use the `facet_wrap()` function to explore the detection data furthe
 
 ```{r}
 blacktip %>%
-  ggplot(mapping = aes(x = local.Date.time, y = as.factor(Station.Name))) + 
+  ggplot(mapping = aes(x = local_date_time, y = station_name)) + 
   xlab("Date") + ylab("Receiver station") +
   geom_point() +
-  facet_wrap(~Transmitter.Name, nrow=1) # This time plot seperate boxplots for each shark
+  facet_wrap(~transmitter_name, nrow=1) # This time plot seperate boxplots for each shark
 ```
 
 **Additional Task: Can you now plot this with a different colour for each shark?**
-
-
-
-
-
 
 <br> <br>
 
