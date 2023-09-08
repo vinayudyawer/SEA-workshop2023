@@ -30,12 +30,8 @@ htmltools::img(src =knitr::image_uri('images/banner1.png'),
 
 ## Introductions
 
-
-
-:::: {style="display: grid; grid-template-columns: 2fr 1fr; grid-column-gap: 60px;"}
-
-::: {}
-
+::: {style="display: grid; grid-template-columns: 2fr 1fr; grid-column-gap: 60px;"}
+<div>
 
 ### Who am I?
 
@@ -47,17 +43,14 @@ analyse and visualise large and complex spatial datasets. He has developed **R**
 animals using acoustic telemetry data from single study sites to continental scale arrays. Vinay's **R** codes can be found on his [github
 page](https://github.com/vinayudyawer).
 
+</div>
 
+<div>
+
+![](images/pic.jpg)
+
+</div>
 :::
-
-::: {}
-
-![](images/pic.jpg) 
-
-:::
-
-::::
-
 
 <br> <br>
 
@@ -83,7 +76,8 @@ This **R** workshop is intended to run across 3 sessions.
 -   **Session 1:** *Getting familiar with R and spatial data*
 
 1.  **Import** and **explore** datasets using %pipes% and the [*tidyverse*](http://tidyverse.org/) group of **R** packages
-2.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/), [*ggspatial*](https://paleolimbot.github.io/ggspatial/) and [*mapview*](https://r-spatial.github.io/mapview/) **R** packages
+2.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/), [*ggspatial*](https://paleolimbot.github.io/ggspatial/) and
+    [*mapview*](https://r-spatial.github.io/mapview/) **R** packages
 
 <br>
 
@@ -100,7 +94,6 @@ This **R** workshop is intended to run across 3 sessions.
 1.  Understanding the data structure from **acoustic telemetry data**
 2.  Using the [*VTrack*](http://github.com/rossdwyer/VTrack) R package to explore patterns in animal detections and dispersal
 3.  Using the [*re**mo**ra*](https://github.com/IMOS-AnimalTracking/remora) R package to interactively explore your telemetry data
-
 
 <br> <br>
 
@@ -123,59 +116,53 @@ course documents, telemetry example data and R scripts we are going to work with
 
 <br>
 
-
-Processing and analysing large datasets like those from animal telemetry work can require a huge investment in time: rearranging data, removing 
-erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together Excel spreadsheets, 
+Processing and analysing large datasets like those from animal telemetry work can require a huge investment in time: rearranging data, removing
+erroneous values, purchasing, downloading and learning the new software, and running analyses. Furthermore merging together Excel spreadsheets,
 filtering data and preparing data for statistical analyses and plotting in different software packages can introduce all sorts of errors.
 
 **R** is a powerful language for data wrangling and analysis because...
 
-* It is relatively *fast* to run and process commands
-* You can create *repeatable* scripts
-* You can *trace errors* back to their source
-* You can *share your scripts* with other people
-* It is *easy to identify errors* in large data sets
-* Having your data in **R** opens up a huge array of cutting edge analysis tools.
-* **R** is also totally **FREE!**
+-   It is relatively *fast* to run and process commands
+-   You can create *repeatable* scripts
+-   You can *trace errors* back to their source
+-   You can *share your scripts* with other people
+-   It is *easy to identify errors* in large data sets
+-   Having your data in **R** opens up a huge array of cutting edge analysis tools.
+-   **R** is also totally **FREE!**
 
-<br><br>
+<br>
 
 **Installing packages**
 
 Part of the reason **R** has become so popular is the vast array of packages that are freely available and highly accessible. In the last few years,
-the number of packages has grown exponentially [> 10,000 on CRAN!](http://blog.revolutionanalytics.com/2017/01/cran-10000.html) These can help you to
-do a galaxy of different things in **R**, including *running complex analyses*, drawing *beautiful figures*, running *R as a GIS*, constructing
-your own *R packages*, building *web pages* and even *writing R course handbooks* like this one!
+the number of packages has grown exponentially [\> 10,000 on CRAN!](http://blog.revolutionanalytics.com/2017/01/cran-10000.html) These can help you to
+do a galaxy of different things in **R**, including *running complex analyses*, drawing *beautiful figures*, running *R as a GIS*, constructing your
+own *R packages*, building *web pages* and even *writing R course handbooks* like this one!
 
-Let’s suppose you want to load the `sf` package to access this package's incredible spatial functionality. If this package is not already installed 
-on your machine, you can download it from the web by using the following command in **R**.
+Let's suppose you want to load the `sf` package to access this package's incredible spatial functionality. If this package is not already installed on
+your machine, you can download it from the web by using the following command in **R**.
 
-```{r, include=TRUE, eval=FALSE}
+```{r, include=TRUE, eval=FALSE, class.source = 'fold-show'}
 install.packages("sf", repos='http://cran.us.r-project.org')
 ```
 
-In this example, `sf` is the package to be downloaded and 'http://cran.us.r-project.org' is the repository where the package will be accessed from. 
+In this example, `sf` is the package to be downloaded and '<http://cran.us.r-project.org>' is the repository where the package will be accessed from.
 
 <br>
 
-More recently, package developers have also used other platforms like [**GitHub**](https://github.com) to house **R** packages. This has enabled users 
+More recently, package developers have also used other platforms like [**GitHub**](https://github.com) to house **R** packages. This has enabled users
 to access packages that are actively being updated and enable developers to fix problems and develop new features with user feedback.
 
 The `remotes` and `devtools` **R** packages have enabled the installation of packages directly from platforms like **GitHub**. For example, if we want
 want to download the `VTrack` package from the github repository, we can use the `install_github()` package to do it like this:
 
-``` {r, include=TRUE, eval=FALSE}
+```{r, include=TRUE, eval=FALSE, class.source = 'fold-show'}
 remotes::install_github("rossdwyer/VTrack")
 ```
 
-When downloading using this form, the R console will ask you if it should also update packages. In most cases, you can proceed with updating packages 
-only found on CRAN (**option [2]**).
-
-<br>
-
 Once installing the packages we want to use, we need to load them using the `library()` function.
 
-```{r, include=TRUE, eval=FALSE}
+```{r, include=TRUE, eval=FALSE, class.source = 'fold-show'}
 library(sf)
 library(VTrack)
 ```
@@ -183,36 +170,37 @@ library(VTrack)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+### Installation instructions:
+
+For this course, make sure you have downloaded and installed the most updated versions of the following software:
+
 <br>
 
-### For this course, make sure you have downloaded and installed the most updated version of R  and RStudio:
+**1. Download R for your relevant operating system from the [CRAN website](https://cran.rstudio.com)** <br>
 
-<br>
-
-**1. Download R for your relevant Operating System from the [CRAN website](https://cran.rstudio.com)**
-<br>
-
-**2. Download RStudio for your relevant Operating system from the [RStudio website](https://posit.co/products/open-source/rstudio/)**
-<br>
+**2. Download RStudio for your relevant operating system from the [RStudio website](https://posit.co/products/open-source/rstudio/)** <br>
 
 **3. Once you've installed the above software, make sure you install the following packages prior to the start of the course**
 
-```{r, include=TRUE, eval=FALSE}
+```{r, include=TRUE, eval=FALSE, class.source = 'fold-show'}
 ## Packages that are on CRAN
 
 install.packages(c("tidyverse",
                    "sf",
                    "ggspatial",
+                   "leaflet",
                    "remotes"))
 
 ## Install packages from GitHub and other external repositories
 
 remotes::install_github("r-spatial/mapview", build_vignettes = TRUE)
-
 remotes::install_github("rossdwyer/VTrack", build_vignettes = TRUE)
-
 remotes::install_github('IMOS-AnimalTracking/remora', build_vignettes = TRUE)
-
 install.packages("aniMotum", 
                  repos = c("https://cloud.r-project.org",
                  "https://ianjonsen.r-universe.dev"),
@@ -220,7 +208,12 @@ install.packages("aniMotum",
 
 ```
 
-<br><br><br><br>
+When downloading from GitHub, the R console will ask you if it should also update packages. In most cases, you can proceed with updating packages only
+found on CRAN (**option [2]**).
+
+</div>
+
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -228,10 +221,9 @@ install.packages("aniMotum",
 
 ### Getting familiar with R and spatial data
 
-|                           |
-|:--------------------------|
+|                          |
+|:-------------------------|
 | ![](images/blacktip.png) |
-
 
 #### 1.1. Import and explore datasets using %pipes% and the ***tidyverse*** group of R packages
 
@@ -242,17 +234,17 @@ are being gathered over longer time periods, over larger spatial extents and at 
 to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and visualise these complex
 datasets.
 
-In this session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in the image
-above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in 2011. Blacktip 
-sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay. 
+In this session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in
+the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in
+2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
-Telemetry data from these sharks were analysed alongside 45 others from five species to examine movement patterns of coastal sharks before, during and after 
-three extreme weather events in Australia (Cyclone Yasi and Tropical Storm Anthony, 2011) and the US (Tropical Storm Gabrielle, 2001). You can read more about
-that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
+Telemetry data from these sharks were analysed alongside 45 others from five species to examine movement patterns of coastal sharks before, during and
+after three extreme weather events in Australia (Cyclone Yasi and Tropical Storm Anthony, 2011) and the US (Tropical Storm Gabrielle, 2001). You can
+read more about that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
 
 <br>
 
-```{r, echo=FALSE, message=FALSE, include=TRUE}
+```{r, echo=FALSE, message=FALSE, include=TRUE, out.width = '100%'}
 
 library(tidyverse)
 library(mapview)
@@ -294,63 +286,73 @@ The web map of detection data we will explore by the end of **Session 1**
 
 <br>
 
-Before we can analyse these data, we first need to read this dataset into R. As with most acoustic detection datasets exported from VUE or other acoustic 
-telemetry data management software, our data set is in the 'comma sperated value' (.csv) format. 
+Before we can analyse these data, we first need to read this dataset into R. As with most acoustic detection datasets exported from VUE or other
+acoustic telemetry data management software, our data set is in the 'comma sperated value' (.csv) format.
 
-A .csv file can simply be imported into **R** using the `read.csv` base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`) and where
-to find it (i.e. in the 'Data' folder).
+A .csv file can simply be imported into **R** using the `read.csv` base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`)
+and where to find it (i.e. in the 'Data' folder).
 
-```{r}
+```{r, class.source = 'fold-show'}
 # Load the blacktip shark data using base read.csv function
 blacktip <- read.csv('data/Session 1/Blacktip_ClevelandBay.csv', header = TRUE)
 ```
 
 <br>
 
-**A note about Excel files**  
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
 
-Don’t use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes files larger than necessary and Excel formats can also unwittingly reformat or alter your data! 
+**A note about Excel files**
 
-A stable way to save your data is as a '.csv' file. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save as’ in Excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the 'Data' folder using a text editor, you will see it is just words, numbers and commas.
+Don't use '.xlsx' or '.xls' files for saving data. The problem with '.xls' and '.xlsx' files are that they store extra info with the data that makes
+files larger than necessary and Excel formats can also unwittingly reformat or alter your data!
+
+A stable way to save your data is as a '.csv' file. These are simply values separated by 'commas' and rows defined by 'returns'. If you select 'Save
+as' in Excel, you can choose '.csv' as one of the options. If you open the .csv file provided in the 'Data' folder using a text editor, you will see
+it is just words, numbers and commas.
+
+</div>
 
 <br><br>
 
-
+<center>
 ![](images/tidyverse.png)
+</center>
 
 <br>
 
 ***What is the tidyverse?***
 
-The [tidyverse](http://tidyverse.org/) is the collective name given to suite of **R** packages designed mostly by Hadley Wickham. This is becoming an increasingly
-popular set of packages that share an underlying design philosophy, grammar, and data structure. You can learn more about all the features of these packages from 
-the free online course developed by the package creators [here](https://r4ds.hadley.nz).
+The [tidyverse](http://tidyverse.org/) is the collective name given to suite of **R** packages designed mostly by Hadley Wickham. This is becoming an
+increasingly popular set of packages that share an underlying design philosophy, grammar, and data structure. You can learn more about all the
+features of these packages from the free online course developed by the package creators [here](https://r4ds.hadley.nz).
 
 <br>
 
 ***Members of the tidyverse***
 
-readr, broom, **dplyr**, **forcats**, **ggplot2**, haven, httr, hms, jsonlite, lubridate, magrittr, modelr, **purrr**, **readr**, readxl, **stringr**, **tibble**, rvest, **tidyr**, xml2
-
+readr, broom, **dplyr**, **forcats**, **ggplot2**, haven, httr, hms, jsonlite, lubridate, magrittr, modelr, **purrr**, **readr**, readxl, **stringr**,
+**tibble**, rvest, **tidyr**, xml2
 
 The advantage of the `tidyverse` is that most of these packages (but not all!) can be loaded simultaneously using a single line of code
 
-```{r setup, message=FALSE}
+```{r setup, message=FALSE, class.source = 'fold-show'}
 library(tidyverse)
 ```
 
 <br>
 
+The `tidyverse` version of the above code will be `read_csv()` function. The main difference being the data imported as a `tibble` data frame. The
+advantage of a `tibble` database is that all the columns will be formatted correctly, with the package guessing what the best format may be.
 
-The `tidyverse` version of the above code will be `read_csv()` function. The main difference being the data imported as a `tibble` data frame.
-The advantage of a `tibble` database is that all the columns will be formatted correctly, with the package guessing what the best format may be.
-
-
-```{r, message=FALSE}
+```{r, message=FALSE, class.source = 'fold-show'}
 blacktip <- read_csv('data/Session 1/Blacktip_ClevelandBay.csv')
 
 # You can also use read_csv to input data directly from a website URL
-blacktip <- read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv')
+blacktip <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv')
 
 head(blacktip)
 ```
@@ -359,17 +361,19 @@ head(blacktip)
 
 **Pipes `%>%`**
 
-![ ](Images/mario.png)
+<center>
+![](Images/mario.png)
+</center>
 
 <br>
 
 Now that we've successfully loaded in our tracking dataset, lets start having a closer look at the data using pipes `%>%`
 
-* Originally from the `magrittr` package but has been imported to the `tidyverse`.
-* `%>%` is an **infix operator**. This means it takes two operands, left and right.
-* 'Pipes' the **output** of the last expression/function (left) forward to the **first input** of the next funciton (right).
+-   Originally from the `magrittr` package but has been imported to the `tidyverse`.
+-   `%>%` is an **infix operator**. This means it takes two operands, left and right.
+-   'Pipes' the **output** of the last expression/function (left) forward to the **first input** of the next funciton (right).
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, class.source = 'fold-show'}
 # For example, to see what class our data is in, we could use this code...
 class(blacktip)
 
@@ -379,16 +383,15 @@ blacktip %>% class()
 
 <br>
 
-***Benefits of pipes %>%***
+***Benefits of pipes %\>%***
 
-* Functions flow in natural order that tells story about data.
-* Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
-* Common style makes it easy to understand collaborator (or your own) code.
-
+-   Functions flow in natural order that tells story about data.
+-   Code effects are easy to reason about by inserting `View()` or `head()` into pipe chain.
+-   Common style makes it easy to understand collaborator (or your own) code.
 
 We can have a quick look at the data by typing:
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, class.source = 'fold-show'}
 # Now insert functions into the pipe chain
 blacktip %>% View()
 blacktip %>% head() # first 6 rows by default
@@ -401,13 +404,14 @@ Note the `()`, as opposed to the `[]` we used for indexing. The `()` signify a *
 
 We can look at the data more closely using the `nrow()`, `ncol()`, `length()`, `unique()`, `str()` and `summary()` functions.
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, class.source = 'fold-show'}
 blacktip %>% nrow() # number of rows in the data frame
 blacktip %>% ncol() # number of columns in the data frame
 blacktip %>% str() # provides internal structure of an R object
 blacktip %>% summary() # provides result summary of the data frame
 ```
-```{r, eval=TRUE, results='hide'}
+
+```{r, eval=TRUE, results='hide', class.source = 'fold-show'}
 # pipes can be used for single column within data frames
 blacktip$transmitter_name <-
   blacktip$transmitter_name %>% as.factor()
@@ -418,9 +422,10 @@ blacktip %>%
   nrow() # number of rows (i.e. detections) from 'Colin'
 ```
 
-Pipes can also be used to pre-process our data before plotting them. Lets now use pipes to plot a simple barplot of the number of Colins detections at each reciever.
+Pipes can also be used to pre-process our data before plotting them. Lets now use pipes to plot a simple barplot of the number of Colins detections at
+each reciever.
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, class.source = 'fold-show', fig.align = 'center'}
 blacktip %>% 
   subset(transmitter_name == "Colin") %>% # subset dataset to include only detections by 'Colin'
   with(table(station_name)) %>% # create a table with the number of rows (i.e. detections) per receiver
@@ -431,21 +436,23 @@ blacktip %>%
 
 **`dplyr`**
 
-* `dplyr` is the data wrangling workhorse of the tidyverse.
-* Provides functions, **verbs**, that can manipulate data into the shape you need for analysis.
-* Has many backends allowing `dplyr` code to work on data stored in SQL databases and big data clusters.
-    - Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
+-   `dplyr` is the data wrangling workhorse of the tidyverse.
+-   Provides functions, **verbs**, that can manipulate data into the shape you need for analysis.
+-   Has many backends allowing `dplyr` code to work on data stored in SQL databases and big data clusters.
+-   Works via translation to SQL. Keep an eye out for the SQL flavour in `dplyr`
 
 ***Basic vocabulary***
 
-* `select()` columns from a tibble 
-* `filter()` to rows matching a certain condition
-* `arrange()` rows in order
-* `mutate()` a tibble by changing or adding rows
-* `group_by()` a variable
-* `summarise()` data over a group using a function
+-   `select()` columns from a tibble
+-   `filter()` to rows matching a certain condition
+-   `arrange()` rows in order
+-   `mutate()` a tibble by changing or adding rows
+-   `group_by()` a variable
+-   `summarise()` data over a group using a function
 
-Check out this useful online [cheatsheet](https://rstudio.github.io/cheatsheets/html/data-transformation.html?_gl=1*1osjb37*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..) for data wrangling.
+Check out this useful online
+[cheatsheet](https://rstudio.github.io/cheatsheets/html/data-transformation.html?_gl=1*1osjb37*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..)
+for data wrangling.
 
 <br>
 
@@ -453,7 +460,7 @@ Check out this useful online [cheatsheet](https://rstudio.github.io/cheatsheets/
 
 We can use the `select` function in `dplyr` to choose the columns we want to include for our analyses and plotting
 
-```{r}
+```{r, class.source = 'fold-show'}
 # Select the rows we are interested in
 blacktip <- 
   blacktip %>% 
@@ -468,7 +475,8 @@ head(blacktip)
 **`filter` and `arrange`**
 
 We can use these functions to **subset the data** to rows matching logical conditions and then **arrange according to particular attributes**
-```{r, eval=FALSE}
+
+```{r, eval=FALSE, class.source = 'fold-show'}
 blacktip %>%
   filter(transmitter_name == "Ana") %>%
   arrange(date_time) # arrange Ana's detections in chronological order
@@ -483,7 +491,8 @@ blacktip %>%
 **`group_by` and `summarise`**
 
 Determine the total number of detections for each tagged shark
-```{r, eval=FALSE}
+
+```{r, eval=FALSE, class.source = 'fold-show'}
 blacktip %>%
   group_by(transmitter_name) %>%
   summarise(NumDetections = n()) # summarise number of detections per tagged shark
@@ -498,7 +507,8 @@ blacktip %>%
 **`mutate`**
 
 Adding and removing data to the data frame through a pipe
-```{r}
+
+```{r, class.source = 'fold-show'}
 blacktip <- 
   blacktip %>%
   mutate(date = as.Date(date_time)) %>% # adding a column to the blacktip data with date of each detection
@@ -511,14 +521,16 @@ head(blacktip)
 
 **`lubridate`**
 
-* `lubridate` is an easy way to convert date and time data into a form that **R** can recognise
-* Allows for calculation of durations and intervals between dates.
-* Recognises multiple date time formats and parses them to a standardised 'POSIX' format that **R** uses (`ymd` for dates; `ymd_hms` for date and time parsing)
-* These features are very important when working with spatio-temporal datasets like telemetry data
+-   `lubridate` is an easy way to convert date and time data into a form that **R** can recognise
+-   Allows for calculation of durations and intervals between dates.
+-   Recognises multiple date time formats and parses them to a standardised 'POSIX' format that **R** uses (`ymd` for dates; `ymd_hms` for date and
+    time parsing)
+-   These features are very important when working with spatio-temporal datasets like telemetry data
 
-Currently in our `blacktip` dataset the "date_time" column is in the Universal Coordinated Time Zone (UTC). Let's use `lubridate` to convert this column into the 'POSIX' format and into the local date time (i.e. UTC + 10 hours).
+Currently in our `blacktip` dataset the "date_time" column is in the Universal Coordinated Time Zone (UTC). Let's use `lubridate` to convert this
+column into the 'POSIX' format and into the local date time (i.e. UTC + 10 hours).
 
-```{r, eval=TRUE, message=FALSE}
+```{r, eval=TRUE, message=FALSE, class.source = 'fold-show'}
 library(lubridate)
 
 blacktip <-
@@ -532,47 +544,52 @@ blacktip <-
 
 **Data visualisation using `ggplot2`**
 
-`ggplot2` is a powerful data visualization package for the **R** programming language. The package makes it very easy to generate some very impressive figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in **R** a hassle.
+`ggplot2` is a powerful data visualization package for the **R** programming language. The package makes it very easy to generate some very impressive
+figures and utilise a range of colour palettes, taking care of many of the fiddly details that can make plotting graphs in **R** a hassle.
 
 The system provides **mappings** from your data to **aesthetics** which are used to construct beautiful plots.
 
 Documentation for `ggplot2` can be found [here](https://ggplot2.tidyverse.org).
 
-There is also this awesome [cheetsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*hd7s9e*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..) for `ggplot2`
+There is also this awesome
+[cheetsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html?_gl=1*hd7s9e*_ga*OTE3OTY4MTUzLjE2OTMyODk4OTM.*_ga_2C0WZ1JHG0*MTY5MzQ1NDM4NS4yLjAuMTY5MzQ1NDM4NS4wLjAuMA..)
+for `ggplot2`
 
 <br>
 
 ***`ggplot2` grammar***
 
-The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. 
+The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want.
 
 Building blocks of a graph include:
 
-* data
-* aesthetic mapping
-* geometric object
-* statistical transformations
-* scales
-* coordinate system
-* position adjustments
-* faceting
+-   data
+-   aesthetic mapping
+-   geometric object
+-   statistical transformations
+-   scales
+-   coordinate system
+-   position adjustments
+-   faceting
 
 ***Aesthetic Mapping***
 
-In `ggplot2`, aesthetic means “something you can see”. Aesthetic mapping (i.e., with `aes()`) only says that a variable should be mapped to an aesthetic. 
-It doesn’t say how that should happen. For example, when mapping a variable to shape with `aes(shape = x)` you don’t say what shapes should be used. 
-Similarly, `aes(color = z)` doesn’t say what colors should be used. Describing what colors/shapes/sizes etc. to use is done by modifying the corresponding scale. 
+In `ggplot2`, aesthetic means "something you can see". Aesthetic mapping (i.e., with `aes()`) only says that a variable should be mapped to an
+aesthetic. It doesn't say how that should happen. For example, when mapping a variable to shape with `aes(shape = x)` you don't say what shapes should
+be used. Similarly, `aes(color = z)` doesn't say what colors should be used. Describing what colors/shapes/sizes etc. to use is done by modifying the
+corresponding scale.
 
 In `ggplot2` scales include:
 
-* `position` (i.e., on the x and y axes)
-* `color` (“outside” color)
-* `fill` (“inside” color)
-* `shape` (of points)
-* `linetype`
-* `size`
+-   `position` (i.e., on the x and y axes)
+-   `color` ("outside" color)
+-   `fill` ("inside" color)
+-   `shape` (of points)
+-   `linetype`
+-   `size`
 
-Each type of geom accepts only a subset of all aesthetics–refer to the geom help pages to see what mappings each geom accepts. Aesthetic mappings are set with the `aes()` function.
+Each type of geom accepts only a subset of all aesthetics--refer to the geom help pages to see what mappings each geom accepts. Aesthetic mappings are
+set with the `aes()` function.
 
 <br>
 
@@ -580,22 +597,23 @@ Each type of geom accepts only a subset of all aesthetics–refer to the geom he
 
 Geometric objects are the actual marks we put on a plot. Examples include:
 
-* points (`geom_point`, for scatter plots, dot plots, etc)
-* lines (`geom_line`, for time series, trend lines, etc)
-* boxplot (`geom_boxplot`, for, well, boxplots!)
-A plot must have at least one geom; there is no upper limit. You can add a geom to a plot using the `+` operator
+-   points (`geom_point`, for scatter plots, dot plots, etc)
+-   lines (`geom_line`, for time series, trend lines, etc)
+-   boxplot (`geom_boxplot`, for, well, boxplots!) A plot must have at least one geom; there is no upper limit. You can add a geom to a plot using the
+    `+` operator
 
 You can get a list of available geometric objects using the code below:
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, class.source = 'fold-show'}
 help.search("geom_", package = "ggplot2")
 ```
 
 <br>
 
-In the below script we call the data set we have just made (`blacktip`) and then pipe it into the `ggplot()` function. We than tell ggplot that we want to plot a box plot.
+In the below script we call the data set we have just made (`blacktip`) and then pipe it into the `ggplot()` function. We than tell ggplot that we
+want to plot a box plot.
 
-```{r}
+```{r, class.source = 'fold-show', fig.align = 'center'}
 library(ggplot2)   
 
 blacktip %>%
@@ -607,11 +625,12 @@ blacktip %>%
 
 ```
 
-A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the 'abacus plot'. This plot can help quickly assess which animals are being detected consistently within your array, and identify any temporal or spatial patterns in detection frequency.
+A common plot used in passive acoustic telemetry to assess temporal patterns in detection is the 'abacus plot'. This plot can help quickly assess
+which animals are being detected consistently within your array, and identify any temporal or spatial patterns in detection frequency.
 
 We can adapt the above script to create an abacus plot using our `blacktip` dataset.
 
-```{r}
+```{r, class.source = 'fold-show', fig.align = 'center'}
 blacktip %>%
   ggplot(mapping = aes(x = local_date_time, y = transmitter_name)) + 
   xlab("Date") + ylab("Tag") +
@@ -622,7 +641,7 @@ blacktip %>%
 
 We can also use the `facet_wrap()` function to explore the detection data further and look at how animals were detected at each reciever.
 
-```{r}
+```{r, class.source = 'fold-show', fig.align = 'center'}
 blacktip %>%
   ggplot(mapping = aes(x = local_date_time, y = station_name)) + 
   xlab("Date") + ylab("Receiver station") +
@@ -638,59 +657,69 @@ blacktip %>%
 
 #### 1.2. Working with Spatial objects using the ***sf***, ***ggspatial*** and ***mapview*** R packages
 
-![ ](Images/spatial_banner.png)
+|                              |
+|:-----------------------------|
+|![](Images/spatial_banner.png)|
 
 <br>
 
-**R** offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be the 
-exclusive domain of GIS software, using **R** can frequently provide a much more lightweight, yet equally effective solution that embeds within a larger 
-analytic workflow.
+**R** offers a variety of functions for importing, manipulating, analysing and exporting spatial data. Although one might at first consider this to be
+the exclusive domain of GIS software, using **R** can frequently provide a much more lightweight, yet equally effective solution that embeds within a
+larger analytic workflow.
 
-One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even within **R** 
-itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news is that just like the
-`tidyverse` package family, efforts are underway to standardize spatial data classes in **R**. 
+One of the tricky aspects of pulling spatial data into your analytic workflow is that there are numerous complicated data formats. In fact, even
+within **R** itself, functions from different user-contributed packages often require the data to be structured in very different ways. The good news
+is that just like the `tidyverse` package family, efforts are underway to standardize spatial data classes in **R**.
 
-This movement is facilitated by `sf`, an important base package for spatial operations in **R**. It provides definitions for basic spatial classes (points, 
-lines, polygons, pixels, and grids) in an attempt to unify the way **R** packages represent and manage these sorts of data, and uses grammer that can be 
-integrated into `tidyverse` script. It also includes some core functions for creating and manipulating these data structures. The hope is that all spatial 
-**R** packages will use (or at least provide conversions to) the 'Spatial' data class and its derivatives, as now defined in the `sf` package. All else being
-equal, we favor **R** functions and packages that conform to the `sp` standard, as these are likely to provide the greatest future utility and durability.
+This movement is facilitated by `sf`, an important base package for spatial operations in **R**. It provides definitions for basic spatial classes
+(points, lines, polygons, pixels, and grids) in an attempt to unify the way **R** packages represent and manage these sorts of data, and uses grammer
+that can be integrated into `tidyverse` script. It also includes some core functions for creating and manipulating these data structures. The hope is
+that all spatial **R** packages will use (or at least provide conversions to) the 'Spatial' data class and its derivatives, as now defined in the `sf`
+package. 
 
 [Here](https://r-spatial.github.io/sf/) is a very useful style guide for coding using the `sf` package.
 
 <br>
 
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
 **Coordinate Reference Systems (CRS)**
 
-Central to working with spatial data, is that these data have a coordinate reference system (CRS) associated with it. Geographical CRS are expressed in degrees 
-and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length (meters) and a chosen position on the earth, as 
-well as the underlying ellipse, prime meridian and datum.
+Central to working with spatial data, is that these data have a coordinate reference system (CRS) associated with it. Geographical CRS are expressed
+in degrees and associated with an ellipse, a prime meridian and a datum. Projected CRS are expressed in a measure of length (meters) and a chosen
+position on the earth, as well as the underlying ellipse, prime meridian and datum.
 
-Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess — this led to the collection by the ***European Petroleum Survey Group (EPSG)*** 
-of a geodetic parameter dataset.
+Most countries have multiple coordinate reference systems, and where they meet there is usually a big mess --- this led to the collection by the
+***European Petroleum Survey Group (EPSG)*** of a geodetic parameter dataset.
 
-The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This library is 
-interfaced with R in the `rgdal` package, and the CRS is defined partly in the `proj` package and partly in `rgeos`.
+The EPSG list among other sources is used in the workhorse PROJ.4 library, and handles transformation of spatial positions between different CRS. This
+library is interfaced with R in the `rgdal` package, and the CRS is defined partly in the `proj` package and partly in `rgeos`.
 
-In the next step, we will convert our blacktip dataset (`blacktip`) into a spatial object and specify the CRS. We therefore need to refer to the correct CRS 
-information associated with the spatial data.
+In the next step, we will convert our blacktip dataset (`blacktip`) into a spatial object and specify the CRS. We therefore need to refer to the
+correct CRS information associated with the spatial data.
 
-For simplicity, each projection can be referred to by a unique ID from the ***European Petroleum Survey Group (EPSG)*** geodetic parameter dataset. You can find the 
-relevant EPSG code for your coordinate system from this [website](https://epsg.io). There, simply enter in a key word in the search box and select from 
-the list the correct coordinate system. There is a map image in the top right of the site to help you. 
+For simplicity, each projection can be referred to by a unique ID from the ***European Petroleum Survey Group (EPSG)*** geodetic parameter dataset.
+You can find the relevant EPSG code for your coordinate system from this [website](https://epsg.io). There, simply enter in a key word in the search
+box and select from the list the correct coordinate system. There is a map image in the top right of the site to help you.
 
 The equivalent EPSG code for WGS 84 is [**4326**](https://epsg.io/4326)
 
+</div>
+
 <br>
 
-##### The `sf` package
+##### The **`sf`** package
 
-The `sf` package makes it easy to convert any data frame into a spatial object which we can then plot and explore using other packages. The conversion from
-data frame to a spatial object can be done easily using the `st_as_sf()` function. Lets convert two data sets into spatial objects so we can plot them out.
-The main information we need to provide to convert it to a spatial object will be the names of the columns that denote the coordinates, and the CRS for the data.
-Our receiver coordinates, and hence detection coordinates, were recorded in the **WGS 84** geographic datum in decimal degrees, which is the equivalent EPSG code of **4326**.
+The `sf` package makes it easy to convert any data frame into a spatial object which we can then plot and explore using other packages. The conversion
+from data frame to a spatial object can be done easily using the `st_as_sf()` function. Lets convert two data sets into spatial objects so we can plot
+them out. The main information we need to provide to convert it to a spatial object will be the names of the columns that denote the coordinates, and
+the CRS for the data. Our receiver coordinates, and hence detection coordinates, were recorded in the **WGS 84** geographic datum in decimal degrees,
+which is the equivalent EPSG code of **4326**.
 
-```{r, message=FALSE}
+```{r, message=FALSE, class.source = 'fold-show'}
 library(sf)
 
 # Import datasets
@@ -713,11 +742,11 @@ blacktip_sf <-
 
 <br>
 
-Now if you look at the objects we have created, it should give you some information on what kind of spatial object it has created (`POINTS`),
-and it will provide information on what CRS has been assigned to the coordinate data set. The data itself should look very similar to a `tibble` object
-which should be familiar to you now. The addition of the `geometry` column should give you a hint that it is now a spatial point object.
+Now if you look at the objects we have created, it should give you some information on what kind of spatial object it has created (`POINTS`), and it
+will provide information on what CRS has been assigned to the coordinate data set. The data itself should look very similar to a `tibble` object which
+should be familiar to you now. The addition of the `geometry` column should give you a hint that it is now a spatial point object.
 
-```{r}
+```{r, class.source = 'fold-show'}
 head(blacktip_sf)
 ```
 
@@ -727,30 +756,128 @@ head(blacktip_sf)
 
 Now that we have a spatial object, we can simply visualise it using the `ggplot2` package, and using the `geom_sf` aesthetic.
 
-```{r}
+```{r, class.source = 'fold-show', fig.align = 'center'}
 
 ggplot(cb_stations) +
   geom_sf()
 
 ```
 
+<br><br>
 
-<br>
+##### The **`ggspatial`** package
 
-We can also now use other packages to help make very nice, publication ready maps. The [**`ggspatial`**](https://paleolimbot.github.io/ggspatial/articles/ggspatial.html) 
-package is a very useful package that allows to integrate basemaps to your plots. Adding basemaps means you can do more complex mapping
-without the need to import multiple shapefiles. These basemaps also include satellite imagery which means you can produce nice maps showing
-satellite or aerial imagery in the background.
+We can also now use other packages to help make very nice, publication ready maps. The
+[**`ggspatial`**](https://paleolimbot.github.io/ggspatial/articles/ggspatial.html) package is a very useful package that allows to integrate basemaps
+to your plots. Adding basemaps means you can do more complex mapping without the need to import multiple shapefiles. These basemaps also include
+satellite imagery which means you can produce nice maps with a variety of basemaps in the background. The grammar used by `ggspatial` is similar to
+that of `ggplot2`, so if you are familiar with that plotting package, the way you build a map is similar.
 
 
-```{r}
+There are a range of basemaps available to users through various providers like ESRI, Carto, OpenStreetMap, Mapbox and even Google. However, keep in mind
+some of these providers (like Google and Mapbox) require users to register and purchase a **map token** to allow access. Lets try to plot our receiver stations
+with a basic basemap using the OpenStreetMap provider. We do this by using the `annotation_map_tile()` function, followed by adding a spatial layer using
+`layer_spatial()`.
+
+
+```{r, class.source = 'fold-show', fig.align = 'center', message = FALSE}
 library(ggspatial)
 
 ggplot() +
-  layer_spatial(cb_stations)
+  annotation_map_tile(type = "osm", zoom = 12) +
+  layer_spatial(data = cb_stations)
+
+## Lets explore other basemaps
+
+ggplot() +
+  annotation_map_tile(type = "cartolight", zoom = 12) +
+  layer_spatial(data = cb_stations)
+
+## lets try non-standard basemaps (ESRI satellite imagery)
+
+esri_sat <- paste0('https://services.arcgisonline.com/arcgis/rest/services/',
+                   'World_Imagery/MapServer/tile/${z}/${y}/${x}.jpeg')
+
+ggplot() +
+  annotation_map_tile(type = esri_sat, zoom = 12) +
+  layer_spatial(data = cb_stations)
+
+
+esri_topo <- paste0('https://services.arcgisonline.com/arcgis/rest/services/',
+                   'World_Topo_Map/MapServer/tile/${z}/${y}/${x}.jpeg')
+
+ggplot() +
+  annotation_map_tile(type = esri_topo, zoom = 12) +
+  layer_spatial(data = cb_stations)
 
 
 ```
+
+Just like in `gglot2` you can now add more layers to the map, and control the aesthetics of the layers in the same way. Lets add the detection
+data to this map. In this case lets plot a bubble plot showing numbers of detections for each individual tracked:
+
+```{r, class.source = 'fold-show', fig.align = 'center', fig.height = 4, fig.width = 10, message = FALSE}
+
+ggplot() +
+  annotation_map_tile(type = esri_topo, zoom = 12) +
+  layer_spatial(data = blacktip_sf, aes(size = num_det, col = transmitter_name)) +
+  layer_spatial(data = cb_stations, pch = 21) +
+  facet_wrap(~transmitter_name, nrow = 1) +
+  annotation_scale() +
+  theme(legend.position = "bottom")
+
+```
+
+<br><br>
+
+##### The **`mapview`** package
+
+We can also use the `mapview` package to plot our spatial objects as interactive maps. The `mapview` package provides functions to very quickly
+create interactive visualisations of spatial data. Mapping can be very easy, and like with `ggspatial` you can add different layers to build more
+complex interactive maps.
+
+```{r, message=FALSE, include=TRUE, out.width = '100%'}
+library(mapview)
+
+mapview(cb_stations)
+
+```
+
+
+Now lets add the detection data onto the map. We can use the `burst` parameter to enable subsetting and seperately plot different subsets interactively.
+We can use other functions from the `leaflet` package to modify our 
+
+
+```{r, message=FALSE, include=TRUE, out.width = '100%'}
+
+m <-
+  mapview(cb_stations, 
+        alpha.reg = 0, 
+        alpha = 1, 
+        color = "grey", 
+        map.types = "Esri.WorldImagery", 
+        legend = F, homebutton = F, 
+        cex = 5) +
+  mapview(blacktip_sf, 
+          zcol = "transmitter_name", 
+          alpha = 0, 
+          alpha.reg = 1,
+          burst = T, 
+          legend = F, homebutton = F, 
+          cex = 5)
+
+m
+
+library(leaflet)
+
+m@map %>% 
+    addLayersControl(
+        baseGroups = unique(blacktip_sf$transmitter_name),
+        options = layersControlOptions(collapsed = FALSE)) %>%
+    hideGroup(unique(blacktip_sf$transmitter_name))
+
+```
+
 
 <br><br><br><br>
 
@@ -760,43 +887,41 @@ ggplot() +
 
 ### Working with satellite telemetry data
 
-|                             |
-|:----------------------------|
+|                                 |
+|:--------------------------------|
 | ![](Images/whitetip_banner.png) |
-
-
 
 <br>
 
-#### 2.1.  Understanding the data structure from satellite tags {.tabset .tabset-fade .tabset-pills}
-
+#### 2.1. Understanding the data structure from satellite tags {.tabset .tabset-fade .tabset-pills}
 
 <br>
 
 ##### GPS data
 
-
-
 <br>
 
 <br> <br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 ##### ARGOS data
 
-
-
 <br>
 
 <br> <br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 ##### GLS data
 
+<br>
+
+<br> <br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### 2.2. Processing satellite tag data using the *aniMotum* package
 
 <br>
 
@@ -804,20 +929,7 @@ ggplot() +
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-#### 2.2.  Processing satellite tag data using the *aniMotum* package
-
-
-<br>
-
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-#### 2.3.  Visualising satellite tag data using the *ggspatial* package
-
-
+#### 2.3. Visualising satellite tag data using the *ggspatial* package
 
 <br><br><br><br>
 
@@ -827,8 +939,8 @@ ggplot() +
 
 ### Working with passive acoustic telemetry data
 
-|                         |
-|:------------------------|
+|                           |
+|:--------------------------|
 | ![](images/telemetry.png) |
 
 In this session we will go through a brief walk through of how we can use the *VTrack* R package to quickly format and analyse large acoustic tracking
@@ -842,20 +954,7 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 <br><br>
 
-#### 3.1.  Understanding the data structure from acoustic telemetry data
-
-
-<br>
-
-
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-#### 3.2.  Using the *VTrack* R package to explore patterns in animal detections and dispersal
-
-
+#### 3.1. Understanding the data structure from acoustic telemetry data
 
 <br>
 
@@ -863,12 +962,17 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-#### 3.3.  Using the *re**mo**ra* R package to interactively explore your telemetry data
-
+#### 3.2. Using the *VTrack* R package to explore patterns in animal detections and dispersal
 
 <br>
 
+<br> <br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### 3.3. Using the *re**mo**ra* R package to interactively explore your telemetry data
+
+<br>
 
 <br><br><br><br>
 
@@ -883,11 +987,10 @@ you to discuss these with us as well as others at the workshop to help get a han
 
 If you have any comments or queries reguarding this workshop feel free to contact me:
 
--   Dr. Vinay Udyawer: [v.udyawer\@aims.gov.au](mailto:v.udyawer@aims.gov.au){.email}
+-   Dr. Vinay Udyawer: [v.udyawer@aims.gov.au](mailto:v.udyawer@aims.gov.au){.email}
 
 **Happy Tracking!**
 
 <br><br><br><br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
-
