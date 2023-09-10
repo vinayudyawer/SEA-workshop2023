@@ -1200,9 +1200,9 @@ environmental data including **depth and water temperature**, and can be set to 
 In this session we will work with a small subset of tracking data collected by Brad Norman and his team at [ECOCEAN](https://whaleshark.org.au). The data 
 consists of tracking data from two Whale Sharks (*Rhincodon typus*) tagged with ARGOS tags at the Thaa Atoll, the Maldives, in 2017. The data shows the 
 large oceanic dispersal these species conduct across the Indian Ocean. The data have been processed using a Least-Squares algorithm, and each position
-has an estimated error expressed as an ARGOS location class (see previous section for details on each location class). 
-We will use this dataset to further refine positions, and predict positions at regular intervals, and calculate measures of movement to get some insight 
-into the behaviours of the two individuals.
+has an estimated error expressed as an ARGOS location class (see previous section for details on each location class). The full dataset can be found on
+this [ZoaTrack repository](https://zoatrack.org/projects/402). We will use this dataset to further refine positions, and predict positions at regular 
+intervals, and calculate measures of movement to get some insight into the behaviours of the two individuals.
 
 <br>
 
@@ -1324,8 +1324,26 @@ You can explore the specifics of this package from the vignette [here](https://i
 
 fit <-
   fit_ssm(x = tagdat, 
-          vmax = 1.3, model = "mp")
+          vmax = 1.5, 
+          model = "mp",
+          time.step = 24)
 
+plot(fit, type = 2, what = "predicted", pages = 1, ncol = 2)
+
+resid <- osar(fit)
+
+plot(resid, type = "ts")
+plot(resid, type = "qq")
+plot(resid, type = "acf")
+
+map(fit, what = "predicted")
+
+
+fit_sf <- grab(fit, what = "predicted", as_sf = TRUE)
+
+fit_sf %>% 
+  split(f = .$id) %>% 
+  mapview(zcol = "g")
 
 ```
 
