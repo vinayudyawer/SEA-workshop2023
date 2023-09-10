@@ -16,6 +16,16 @@ editor_options:
     wrap: 150
 ---
 
+```{css, echo = FALSE}
+/* Adjust spacing for tabset headers */
+.tabset-pills .nav-item {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+```
+
 ```{r, echo=FALSE}
 htmltools::img(src =knitr::image_uri('images/banner1.png'),
                alt = 'logo', 
@@ -75,9 +85,9 @@ This **R** workshop is intended to run across 3 sessions.
 
 -   **Session 1:** *Getting familiar with R and spatial data*
 
-1.  **Import** and **explore** datasets using %pipes% and the [*tidyverse*](http://tidyverse.org/) group of **R** packages
-2.  Working with **Spatial objects** using the [*sf*](https://r-spatial.github.io/sf/), [*ggspatial*](https://paleolimbot.github.io/ggspatial/) and
-    [*mapview*](https://r-spatial.github.io/mapview/) **R** packages
+1.  **Import** and **explore** datasets [*tidyverse*](http://tidyverse.org/)
+2.  Working with **Spatial objects** using [*sf*](https://r-spatial.github.io/sf/), [*ggspatial*](https://paleolimbot.github.io/ggspatial/) and
+    [*mapview*](https://r-spatial.github.io/mapview/)
 
 <br>
 
@@ -219,28 +229,29 @@ found on CRAN (**option [2]**).
 
 ## Session 1
 
-### Getting familiar with R and spatial data
+### Getting familiar with R and spatial data {.tabset .tabset-fade}
 
 |                          |
 |:-------------------------|
 | ![](images/blacktip.png) |
 
-#### 1.1. Import and explore datasets using %pipes% and the ***tidyverse*** group of R packages
-
 <br>
 
-The process of turning raw telemetry data into publishable results is a highly involved. Tracking data sets are becoming larger, and larger as they
-are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this is increasing our ability
-to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and visualise these complex
-datasets.
+The process of turning raw data into publishable results is a highly involved, particularly with telemetry studies. Tracking data sets are becoming 
+larger, and larger as they are being gathered over longer time periods, over larger spatial extents and at increasing temporal resolutions. While this
+is increasing our ability to detect subtle patterns, these data sets are becoming vast and require analytical tools that easily handle, manipulate and 
+visualise these complex datasets.
 
 In this session we are going to work with a data set containing detection data from 3 Australian Blacktip Sharks (*Carcharhinus tilstoni*) shown in
-the image above. These animals were captured and tagged within Cleveland Bay, Townsville roughly one month prior to the landfall of Cyclone Yasi in
+the image above. These animals were captured and tagged in Townsville, Australia roughly one month prior to the landfall of Cyclone Yasi in
 2011. Blacktip sharks were tracked using a network of acoustic hydrophones deployed in a grid pattern on the East and West side of Cleveland Bay.
 
 Telemetry data from these sharks were analysed alongside 45 others from five species to examine movement patterns of coastal sharks before, during and
 after three extreme weather events in Australia (Cyclone Yasi and Tropical Storm Anthony, 2011) and the US (Tropical Storm Gabrielle, 2001). You can
 read more about that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
+
+**You will find the datasets we will use for this session in the "data" folder in your downloaded zip file, under the subfolder "Session 1".**
+**Alternatively, you can download the two .csv data files from [here](https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Station_information.csv) and [here]('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv').**
 
 <br>
 
@@ -282,7 +293,15 @@ m@map %>%
 
 ```
 
-The web map of detection data we will explore by the end of **Session 1**
+The web map of detection data we will explore by the end of **Session 1**.
+
+Click on the tabs below to progress through the first session. Lets start with exploring datasets using **tidyverse**:
+
+<a id="session1"></a>
+
+<br>
+
+#### Import and explore datasets using the ***tidyverse***
 
 <br>
 
@@ -651,15 +670,16 @@ blacktip %>%
 
 **Additional Task: Can you now plot this with a different colour for each shark?**
 
+
+<br>
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-<br> <br>
+[Back to top](#session1)
 
-#### 1.2. Working with Spatial objects using the ***sf***, ***ggspatial*** and ***mapview*** R packages
+<br><br>
 
-|                              |
-|:-----------------------------|
-|![](Images/spatial_banner.png)|
+#### Working with Spatial objects using ***sf***, ***ggspatial*** and ***mapview***
 
 <br>
 
@@ -786,7 +806,13 @@ library(ggspatial)
 ggplot() +
   annotation_map_tile(type = "osm", zoom = 12) +
   layer_spatial(data = cb_stations)
+```
 
+You will notice, you now have an extra folder in your working directory called **rosm.cache**. This is the folder `ggspatial` uses to cache basemap images
+for your locations and zoom level. This reduces the number of times we have to download the basemap images if we are plotting the same map multiple times. Now
+lets explore other basemap options that may be useful for making professional looking plots:
+
+```{r, class.source = 'fold-show', fig.align = 'center', message = FALSE}
 ## Lets explore other basemaps
 
 ggplot() +
@@ -802,6 +828,7 @@ ggplot() +
   annotation_map_tile(type = esri_sat, zoom = 12) +
   layer_spatial(data = cb_stations)
 
+## Other non-standard basemaps (ESRI topographical imagery)
 
 esri_topo <- paste0('https://services.arcgisonline.com/arcgis/rest/services/',
                    'World_Topo_Map/MapServer/tile/${z}/${y}/${x}.jpeg')
@@ -814,7 +841,8 @@ ggplot() +
 ```
 
 Just like in `gglot2` you can now add more layers to the map, and control the aesthetics of the layers in the same way. Lets add the detection
-data to this map. In this case lets plot a bubble plot showing numbers of detections for each individual tracked:
+data to this map. We can also add other features in the map like a scale bar using the `annotation_scale()` function.
+Lets plot a bubble plot showing numbers of detections for each individual tracked:
 
 ```{r, class.source = 'fold-show', fig.align = 'center', fig.height = 4, fig.width = 10, message = FALSE}
 
@@ -843,9 +871,11 @@ mapview(cb_stations)
 
 ```
 
+<br>
 
 Now lets add the detection data onto the map. We can use the `burst` parameter to enable subsetting and seperately plot different subsets interactively.
-We can use other functions from the `leaflet` package to modify our 
+We can use other functions from the `leaflet` package to modify our interactive map. Just like `ggplot2`, we can layer multiple `mapview` objects by just adding
+them in sequence. Explore all the settings in the `mapview()` function to customise the difference aspects of your map. 
 
 
 ```{r, message=FALSE, include=TRUE, out.width = '100%'}
@@ -867,77 +897,307 @@ m <-
           cex = 5)
 
 m
+```
 
+
+If you have a closer look at our interactive map (`m`), you'll notice it has two components:
+
+```{r, eval = FALSE}
+
+m@object
+
+m@map
+
+```
+
+
+The `m@object` component houses all the raw spatial data that the interactive map plots, and the `m@map` component has the actual map.
+We can use other functions from the `leaflet` package to make other adjustments to our `@map` component to make is easier to interact with. 
+Here we will use the `addLayersControl()` function to modify how we can interact with the subsets of detection data:
+
+
+```{r, message=FALSE, include=TRUE, out.width = '100%'}
 library(leaflet)
 
-m@map %>% 
+mm <-
+  m@map %>% 
     addLayersControl(
         baseGroups = unique(blacktip_sf$transmitter_name),
         options = layersControlOptions(collapsed = FALSE)) %>%
     hideGroup(unique(blacktip_sf$transmitter_name))
 
+mm
+
+```
+
+<br>
+
+We can then use the `mapshot()` function in the `mapview` package to save our interactive map as a html file or a png output. 
+You can then share the html version of the output to collaborators, or upload them on websites for others to explore your data interactively.
+
+```{r, eval=FALSE}
+
+mapview::mapshot(mm, url = "Blacktip_interactive_map.html", remove_controls = NULL, selfcontained = TRUE)
+
 ```
 
 
-<br><br><br><br>
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<a href="#top" style="color:steelblue; font:bold;" >Back to top</a>
+
+<br><br>
 
 ## Session 2
 
-### Working with satellite telemetry data
+### Working with satellite telemetry data {.tabset .tabset-fade}
 
 |                                 |
 |:--------------------------------|
-| ![](Images/whitetip_banner.png) |
+| ![](Images/whaleshark_banner.png) |
 
 <br>
 
-#### 2.1. Understanding the data structure from satellite tags {.tabset .tabset-fade .tabset-pills}
+<a id="session2"></a>
+
+#### Structure of satellite tag data {.tabset .tabset-fade .tabset-pills}
 
 <br>
 
-##### GPS data
+Satellite tracking of sharks has revolutionized our understanding of these marine predators. By harnessing advanced satellite technology and 
+specialised tagging devices, researchers can monitor the movements, behaviors, and migratory patterns of various shark species with unprecedented precision.
+This invaluable tool not only sheds light on the ecological roles of sharks but also contributes to their conservation by identifying critical habitats, 
+migration routes, and overlap with potential threats. Satellite tracking plays a pivotal role in bridging the gap between scientific knowledge and 
+effective shark conservation efforts in our oceans. Not all satellite tracking devices work the same way. In marine research, there are three main types of
+tags used to track sharks and rays, and each come with their own data structure:
 
 <br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### ARGOS tags 
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+::: {style="display: grid; grid-template-columns: 2fr 1fr; grid-column-gap: 60px;"}
+<div>
+
+ARGOS (Advanced Research and Global Observation Satellite) tags are essential tools for tracking sharks in the vast expanse of the world's oceans. These tags 
+estimate a shark's position by receiving signals from a network of ARGOS satellites orbiting the Earth. Each ARGOS tag is equipped with a transmitter that 
+periodically sends out signals containing the tag's unique identification number and other data. When the tag's signals reach an ARGOS satellite passing 
+overhead, the satellite records the time and location of the signal reception. By using the Doppler effect of frequency of the transmitted signal vs the 
+received signal (from multiple satellites), the ARGOS system calculates the tag's position with a certain degree of accuracy. This position estimate is 
+then relayed to researchers on the ground, providing valuable data about the shark's whereabouts, including latitude and longitude coordinates. While ARGOS 
+tags offer global coverage, they may have limitations in terms of location accuracy compared to GPS tags and rely on animals coming up to the surface 
+regularly, making them more suitable for tracking sharks with broader ranges and less need for high precision. Often ARGOS tags are also combined with 
+GPS transmitters to supplement the positional data with higher accuracy information.
+
+</div>
+
+<div>
+
+![](Images/argos.png)
+
+</div>
+:::
+
+
+
+::: {style="display: grid; grid-template-columns: 1fr 1fr; grid-column-gap: 60px;"}
+<div>
+
+Raw ARGOS data are often pre-processed using a number of algorithms like Kalman filters and least squares methods to refine and define the accuracy of positional
+data obtained from ARGOS tags. These advanced mathematical techniques allow us to correct and improve the accuracy of the initial estimates provided by the ARGOS
+system. Kalman filters, for instance, model the movement of the tagged animal over time, incorporating factors like ocean currents and atmospheric conditions to 
+produce more reliable position estimates. Least squares methods minimize the discrepancy between observed ARGOS positions and expected positions based on the animals
+known characteristics. Once filtered, each estimated position is associated with a specific 'Location Class' that are either 3, 2, 1, 0, A, B, Z (and G if GPS data
+is included).
+
+</div>
+
+<div>
+
+![](Images/argos_table.jpg)
+
+</div>
+:::
+
+</div>
+
+<br>
+
+**Data structure:**
+
+The structure for data obtained using ARGOS devices after running it through a post-processing filter includes: **tag ID (often PTT), date and time of detection,** 
+**estimated latitude, estimated longitude, location class of estimated error**; if the data has been processed using a Kalman filter, the error is defined
+by additinal variables including **error radius, semi-major axis, semi-minor axis, ellipse orientation.** Tags used in marine tracking also collect additional
+environmental data including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
+
+![](Images/argos_data_structure.png)
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[Back to top](#session2)
+
+<br><br>
+
+##### GPS tags
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+::: {style="display: grid; grid-template-columns: 2fr 1fr; grid-column-gap: 60px;"}
+<div>
+
+GPS (Global Position System) tags are invaluable for accurately determining the positions of tracked sharks and rays. These tags rely on a constellation of GPS 
+satellites orbiting the Earth. Each GPS tag is equipped with a GPS receiver that constantly listens for signals from multiple GPS satellites. By measuring the 
+time it takes for signals to reach the tag from different satellites, the tag can calculate its precise latitude and longitude coordinates. GPS tags provide 
+real-time, high-resolution location data, making them ideal for tracking sharks with fine-scale movements or those inhabiting nearshore environments. This 
+technology enables researchers to monitor a shark's every move, from its foraging behavior to its migration patterns, with a level of detail that is unmatched
+by other tracking methods. GPS tags are particularly valuable for understanding the spatial ecology of coastal and territorial sharks. Again, like the ARGOS tags 
+these tags also rely on animals coming up to the surface regularly, and are more suitable for tracking non-benthic or pelagic species. Like with ARGOS tags, GPS
+tags are often also paired with other technologies (e.g., GSM mobile phone technology) to increase spatial coverage and increase battery life of tags.
+
+</div>
+
+<div>
+![](Images/gps.png)
+</div>
+:::
+
+</div>
+
+<br>
+
+**Data structure:**
+
+The structure for data obtained using GPS devices is a lot more simpler than other formats and often includes at the least: **tag ID (often PTT), date and time**
+**of detection, estimated latitude, estimated longitude**. Like with ARGOS tags, GPS tags for marine research also often collect a range of environmental data
+including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
+
+![](Images/gis_data_structure.png)
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[Back to top](#session2)
+
+<br><br>
+
+##### GLS tags
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+::: {style="display: grid; grid-template-columns: 1.5fr 1fr; grid-column-gap: 60px;"}
+<div>
+
+GLS (Geolocation sensor) tags are a specialized tracking tags that estimates a shark's position based on the timing of natural light patterns, specifically 
+sunrise and sunset. These tags are often used for tracking oceanic and pelagic sharks that roam over vast distances, but are also useful for benthic species
+that don't surface frequently. A GLS tag is equipped with light sensors that record the daily variations in ambient light levels. By analyzing the timing and 
+duration of these light patterns, the tag can estimate the shark's latitude and longitude. The estimation of coordinates from GLS tags are done using one of 
+two methods;
+
+1. Threshold methods: use two successive twilight events (the times at which the recorded light level crosses a predetermined threshold) to produce a 
+location estimate.
+2. Curve-fitting methods: use rate of change in light level during the twilight period to derive a location estimate using a single twilight.
+
+<br>
+
+In GLS tags used in marine environments, the light data is also supplimented by the tag collecting light attenuation with depth to provide more accurate estimates 
+of twighlight. Light geolocator methods have large errors in location estimates. GLS tags do not provide real-time location data and are generally less accurate 
+than GPS tags. Nevertheless, they are suitable for more benthic species or sharks and rays that may not tolerate larger, more intrusive tags, and they have contributed 
+significantly to our understanding of long-distance migrations and seasonal behaviors. Like the ARGOS and GPS tags, GLS tags in shark research are often packaged
+with other sensors (e.g., temperature, pressure, accelerometers) to transmit more information on the animal's environment, and are often deployed on timed releases
+to detach from the tagged animal before transmitting information back to the researchers.
+
+</div>
+
+<div>
+
+<br>
+
+![](Images/gls.png)
+
+<br><br><br><br>
+
+![](Images/minipat.jpg)
+
+</div>
+:::
+
+</div>
+
+<br>
+
+**Data structure:**
+
+GLS tag data need to be processed to estimate most likely coordinates based on the light data. In most cases, tag manufacturers provide their own post-processing
+software (e.g., [Wildlife Computers GPE3 algorithm](https://wildlifecomputers.com/blog/using-gpe3-to-improve-geolocation-estimates/)). These software often use
+state-space or maximum likelihood algorithms to improve the estimation of locations based on other data collected by the tag (i.e., *water temperature, depth,*
+*deployment and pop-off location, ARGOS/GPS based positional data*). The software uses the combination of light, maximum depth, water temperature, and any other 
+positional data provided to compare with known bathymetry and seasonal temperature maps in the region of the study site. This process helps improve estimated
+coordinates, and provides a measure or error for each estimated location.
+
+The structure for data obtained using GLS devices after running it through a post-processing software includes: **tag ID (often PTT), date and time of estimated location,** 
+**estimated latitude, estimated longitude, error in latitudinal estimate and longitudinal estimate**. The tags used in marine tracking will also collect and transmit
+environmental data including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
+
+![](Images/gls_data_structure.png)
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[Back to top](#session2)
+
+<br><br>
+
+#### Processing satellite tag data using ***aniMotum***
+
+<br>
+
+In this session we will 
 
 <br> <br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-##### ARGOS data
+[Back to top](#session2)
 
-<br>
+<br><br>
 
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-##### GLS data
-
-<br>
-
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#### 2.2. Processing satellite tag data using the *aniMotum* package
-
-<br>
-
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#### 2.3. Visualising satellite tag data using the *ggspatial* package
+#### Visualising satellite tag data using ***ggspatial***
 
 <br><br><br><br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+<a href="#top" style="color:steelblue; font:bold;" >Back to top</a>
+
+<br><br>
+
 ## Session 3
 
-### Working with passive acoustic telemetry data
+### Working with passive acoustic telemetry data {.tabset .tabset-fade}
 
 |                           |
 |:--------------------------|
@@ -945,7 +1205,7 @@ m@map %>%
 
 In this session we will go through a brief walk through of how we can use the *VTrack* R package to quickly format and analyse large acoustic tracking
 datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
-called *re**mo**ra* that helps users to interactively explore thier data as well as append environmental data to detections to further your analysis
+called *re**mo**ra* that helps users to interactively explore their data as well as append environmental data to detections to further your analysis
 of animal movements.
 
 Here we are just arming you with multiple tools to be able to analyse your data. Which analysis (and thus R package) is more appropriate and suitable
@@ -954,7 +1214,9 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 <br><br>
 
-#### 3.1. Understanding the data structure from acoustic telemetry data
+<a id="session3"></a>
+
+#### Structure of acoustic telemetry data
 
 <br>
 
@@ -962,7 +1224,11 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### 3.2. Using the *VTrack* R package to explore patterns in animal detections and dispersal
+[Back to top](#session3)
+
+<br><br>
+
+#### Explore patterns of detection with ***VTrack***
 
 <br>
 
@@ -970,18 +1236,23 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### 3.3. Using the *re**mo**ra* R package to interactively explore your telemetry data
+[Back to top](#session3)
+
+<br><br>
+
+#### Explore your data with ***re***mo***ra***
 
 <br>
 
 <br><br><br><br>
 
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Signoff!
+##### Signoff!
 
 This is where we end our R workshop! There may have been a few bits of code that you had trouble with or need more time to work through. We encourage
-you to discuss these with us as well as others at the workshop to help get a handle on the R code.
+you to discuss these with me as well as others at the workshop to help get a handle on the R code.
 
 <br>
 
@@ -991,6 +1262,5 @@ If you have any comments or queries reguarding this workshop feel free to contac
 
 **Happy Tracking!**
 
-<br><br><br><br>
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+<br>
