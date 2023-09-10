@@ -112,13 +112,19 @@ This **R** workshop is intended to run across 3 sessions.
 ### Course Resources
 
 The course resources will be emailed to you prior to the workshop. However, you can also access the data and scripts we will work through in this
-course, download the course resources from this [GitHub repository](https://github.com/vinayudyawer/SEA-workshop2023) page. This page contains the
-course documents, telemetry example data and R scripts we are going to work with. To download the folder click on the green
-[**Code**]{style="color:green"}, dropdown menu and select **"Download ZIP"**
+course following these steps:
 
-![](Images/github.png)
+**1. Download the course materials from [this link](https://github.com/vinayudyawer/SEA-workshop2023).**
 
-<br><br><br><br>
+**2. Unzip the downloaded file. It should have the following two folders and a html file:**
+  **i)** [***Code***]{style="color:darkblue"} *folder*
+  **ii)** [***Data***]{style="color:darkblue"} *folder*
+  **iii)** [***SEA-workshop2023.html***]{style="color:darkblue"} *file*
+
+**3. Save all the files in a location on your computer you can find again during the workshop**
+        
+
+<br><br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -250,8 +256,8 @@ Telemetry data from these sharks were analysed alongside 45 others from five spe
 after three extreme weather events in Australia (Cyclone Yasi and Tropical Storm Anthony, 2011) and the US (Tropical Storm Gabrielle, 2001). You can
 read more about that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
 
-**You will find the datasets we will use for this session in the "data" folder in your downloaded zip file, under the subfolder "Session 1".**
-**Alternatively, you can download the two .csv data files from [here](https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Station_information.csv) and [here]('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv').**
+**You can download the datasets we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%201.zip).**
+**The link should download a zip file with two .csv files that we will use during this session.**
 
 <br>
 
@@ -311,9 +317,9 @@ acoustic telemetry data management software, our data set is in the 'comma spera
 A .csv file can simply be imported into **R** using the `read.csv` base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`)
 and where to find it (i.e. in the 'Data' folder).
 
-```{r, class.source = 'fold-show'}
+```{r, eval = FALSE, class.source = 'fold-show'}
 # Load the blacktip shark data using base read.csv function
-blacktip <- read.csv('data/Session 1/Blacktip_ClevelandBay.csv', header = TRUE)
+blacktip <- read.csv('location_of_csv_file', header = TRUE)
 ```
 
 <br>
@@ -1176,6 +1182,10 @@ environmental data including **depth and water temperature**, and can be set to 
 <br>
 
 In this session we will 
+
+**You can download the dataset we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%202.zip).**
+**The link should download a zip file with one .csv file that we will use during this session.**
+
 
 <br> <br>
 
