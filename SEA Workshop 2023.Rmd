@@ -62,7 +62,7 @@ page](https://github.com/vinayudyawer).
 </div>
 :::
 
-<br> <br>
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -105,9 +105,14 @@ This **R** workshop is intended to run across 3 sessions.
 2.  Using the [*VTrack*](http://github.com/rossdwyer/VTrack) R package to explore patterns in animal detections and dispersal
 3.  Using the [*re**mo**ra*](https://github.com/IMOS-AnimalTracking/remora) R package to interactively explore your telemetry data
 
-<br> <br>
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
 
 ### Course Resources
 
@@ -117,16 +122,22 @@ course following these steps:
 **1. Download the course materials from [this link](https://github.com/vinayudyawer/SEA-workshop2023).**
 
 **2. Unzip the downloaded file. It should have the following two folders and a html file:**
-  **i)** [***Code***]{style="color:darkblue"} *folder*
-  **ii)** [***Data***]{style="color:darkblue"} *folder*
-  **iii)** [***SEA-workshop2023.html***]{style="color:darkblue"} *file*
+
+- [***Code***]{style="color:darkblue"} *folder*
+- [***Data***]{style="color:darkblue"} *folder*
+- [***SEA-workshop2023.html***]{style="color:darkblue"} *file*
 
 **3. Save all the files in a location on your computer you can find again during the workshop**
-        
+    
+</div>
 
-<br><br>
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<a href="#top" style="color:steelblue; font:bold;" >Back to top</a>
+
+<br><br>
 
 ## Software installation
 
@@ -233,6 +244,10 @@ found on CRAN (**option [2]**).
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
+<a href="#top" style="color:steelblue; font:bold;" >Back to top</a>
+
+<br><br>
+
 ## Session 1
 
 ### Getting familiar with R and spatial data {.tabset .tabset-fade}
@@ -256,8 +271,10 @@ Telemetry data from these sharks were analysed alongside 45 others from five spe
 after three extreme weather events in Australia (Cyclone Yasi and Tropical Storm Anthony, 2011) and the US (Tropical Storm Gabrielle, 2001). You can
 read more about that study [here](http://www.int-res.com/abstracts/meps/v480/p171-183/).
 
-**You can download the datasets we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%201.zip).**
-**The link should download a zip file with two .csv files that we will use during this session.**
+<br>
+
+[**You can download the datasets we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%201.zip).**]{style="color:firebrick"}
+[**The link should download a zip file with two .csv files that we will use during this session.**]{style="color:firebrick"}
 
 <br>
 
@@ -294,8 +311,8 @@ m@map %>%
         #baseGroups = c("Map","Satellite"),
         baseGroups = unique(blacktip$transmitter_name),
         options = layersControlOptions(collapsed = FALSE)) %>%
-    hideGroup(unique(blacktip$transmitter_name)) %>% 
-  setView(lng = 146.90097, lat = -19.20836, zoom = 11)
+  setView(lng = 146.90097, lat = -19.20836, zoom = 11) %>% 
+  hideGroup(unique(blacktip$transmitter_name))
 
 ```
 
@@ -979,7 +996,6 @@ migration routes, and overlap with potential threats. Satellite tracking plays a
 effective shark conservation efforts in our oceans. Not all satellite tracking devices work the same way. In marine research, there are three main types of
 tags used to track sharks and rays, and each come with their own data structure:
 
-<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1181,13 +1197,139 @@ environmental data including **depth and water temperature**, and can be set to 
 
 <br>
 
-In this session we will 
+In this session we will work with a small subset of tracking data collected by Brad Norman and his team at [ECOCEAN](https://whaleshark.org.au). The data 
+consists of tracking data from two Whale Sharks (*Rhincodon typus*) tagged with ARGOS tags at the Thaa Atoll, the Maldives, in 2017. The data shows the 
+large oceanic dispersal these species conduct across the Indian Ocean. The data have been processed using a Least-Squares algorithm, and each position
+has an estimated error expressed as an ARGOS location class (see previous section for details on each location class). 
+We will use this dataset to further refine positions, and predict positions at regular intervals, and calculate measures of movement to get some insight 
+into the behaviours of the two individuals.
 
-**You can download the dataset we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%202.zip).**
-**The link should download a zip file with one .csv file that we will use during this session.**
+<br>
+
+[**You can download the dataset we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%202.zip).**]{style="color:firebrick"}
+[**The link should download a zip file with one .csv file that we will use during this session.**]{style="color:firebrick"}
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, include=TRUE, out.width = '100%'}
+library(tidyverse)
+library(sf)
+library(mapview)
+library(leaflet)
+
+tagdat <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%202/Thaa_Whalesharks_ECOCEAN.csv') %>% 
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+
+path <-
+  tagdat %>% 
+  group_by(DeployID) %>% 
+  summarise(do_union = FALSE) %>% 
+  st_cast("LINESTRING")
+
+m_130 <-
+  mapview(path %>% filter(DeployID %in% "M-130"), alpha = 1, color = "white", homebutton = F, legend = F, map.type = c("Esri.NatGeoWorldMap"), layer.name = "M-130") +
+  mapview(tagdat %>% filter(DeployID %in% "M-130"), alpha.regions = 1, alpha = 0, col.regions = "white", homebutton = F, legend = F, cex = 3, layer.name = "M-130") +
+  mapview(tagdat %>% filter(DeployID %in% "M-130") %>% slice(1), alpha.regions = 1, alpha = 0, col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-130") +
+  mapview(tagdat %>% filter(DeployID %in% "M-130") %>% slice(n()), alpha.regions = 1, alpha = 0, col.regions = "firebrick", homebutton = F, legend = F, layer.name = "M-130")
+
+m_150 <-
+  mapview(path %>% filter(DeployID %in% "M-150"), alpha = 1, color = "white", homebutton = F, legend = F, map.type = c("Esri.NatGeoWorldMap"), layer.name = "M-150") +
+  mapview(tagdat %>% filter(DeployID %in% "M-150"), alpha.regions = 1, alpha = 0, col.regions = "white", homebutton = F, legend = F, cex = 3, layer.name = "M-150") +
+  mapview(tagdat %>% filter(DeployID %in% "M-150") %>% slice(1), alpha.regions = 1, alpha = 0, col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-150") +
+  mapview(tagdat %>% filter(DeployID %in% "M-150") %>% slice(n()), alpha.regions = 1, alpha = 0, col.regions = "firebrick", homebutton = F, legend = F, layer.name = "M-150")
+  
+(m_130 + m_150)@map %>% 
+  addLayersControl(
+        # overlayGroups = c("Esri.NatGeoWorldMap","Esri.WorldImagery"),
+        baseGroups = c("M-130", "M-150"),
+        options = layersControlOptions(collapsed = FALSE))
 
 
-<br> <br>
+```
+
+<br>
+
+::: {style="display: grid; grid-template-columns: 1fr 2fr; grid-column-gap: 60px;"}
+<div>
+
+We will use the [**aniMotum**](https://github.com/ianjonsen/aniMotum) package developed by Dr. Ian Jonsen. This package provides a quick and easy
+means to refine positions by integrating the error associated with location data, and modelling the data to be able to predict locations at fixed
+intervals. The package also provides a means to explore potential movement behaviours using the characteristics of the track. For more details on
+the package you can explore the vignettes provided with the package, and also explore its applications in this [paper](https://doi.org/10.1111/2041-210X.14060).
+
+<br>
+
+The package has a clear workflow, and we can walk through the first 4 steps to process and visualise our data:
+
+<br>
+
+1. Modify our data to the expected input format
+
+2. Choose and fit an appropriate State-space movement process model
+
+3. Check our model fit
+
+4. Visualise our model estimates
+
+</div>
+
+<div>
+
+![](Images/animotum_schematic.jpg)
+
+</div>
+:::
+
+<br>
+
+Lets begin our data processing by first reading in the data, and formatting it so that the package can read it properly:
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(aniMotum)
+
+raw_data <- read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%202/Thaa_Whalesharks_ECOCEAN.csv')
+
+head(raw_data, n = 4)
+
+## Now lets format the data using transmute() so aniMotum can read it properly
+
+tagdat <-
+  raw_data %>% 
+  transmute(id = DeployID,
+            date = Loc.DateTime,
+            lc = Loc.Class,
+            lon = Longitude,
+            lat = Latitude)
+
+head(tagdat, n = 4)
+
+```
+
+Now that we have formatted the data correctly, lets move onto the second step; choosing and fitting a movement model. This step allows us to model
+the data we have, and gives us the ability to then predict positions along the animals movement path to produce positions at fixed time periods. 
+This becomes important when we want to calculate metrics of movements to help define movement behaviours. There are three main movement processes
+that `aniMotum` provides: 
+
+1. **Random Walk (RW) models** - where movements between positions are modeled to be random in direction and magnitude.
+2. **Correlated Random Walk (CRW) model** - where movements between positions are modeled as random and *correlated* in direction and magnitude.
+3. **Continuous-time Move Persistence (MP) model** - where movements between positions are modeled as random with correlations in direction and magnitude that *vary in time*.
+
+You can explore the specifics of this package from the vignette [here](https://ianjonsen.github.io/aniMotum/articles/Overview.html).
+
+``` {r, eval = FALSE}
+## Lets now now fit a Continuous-time Move Persistence (MP) model to our data
+
+fit <-
+  fit_ssm(x = tagdat, 
+          vmax = 1.3, model = "mp")
+
+
+```
+
+<br><br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
