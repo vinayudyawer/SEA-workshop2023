@@ -17,8 +17,35 @@ editor_options:
 ---
 
 ```{css, echo = FALSE}
+/* styles.css */
 
+.text-toggle button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.text-toggle button:hover {
+  background-color: #0056b3;
+}
+
+#hidden-text {
+  display: none;
+}
 ```
+
+<script>
+function toggleText() {
+  var x = document.getElementById("hidden-text");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
 
 ```{r, echo=FALSE}
 htmltools::img(src =knitr::image_uri('images/banner1.png'),
@@ -232,7 +259,7 @@ found on CRAN (**option [2]**).
 
 |                          |
 |:-------------------------|
-| ![](images/blacktip.png) |
+| ![](images/session1/blacktip.png) |
 
 <br>
 
@@ -336,7 +363,7 @@ it is just words, numbers and commas.
 <br><br>
 
 <center>
-![](images/tidyverse.png)
+![](images/session1/tidyverse.png)
 </center>
 
 <br>
@@ -380,7 +407,7 @@ head(blacktip)
 **Pipes `%>%`**
 
 <center>
-![](Images/mario.png)
+![](images/session1/mario.png)
 </center>
 
 <br>
@@ -962,7 +989,7 @@ mapview::mapshot(mm, url = "Blacktip_interactive_map.html", remove_controls = NU
 
 |                                 |
 |:--------------------------------|
-| ![](Images/whaleshark_banner.png) |
+| ![](images/session2/whaleshark_banner.png) |
 
 <br>
 
@@ -1008,7 +1035,7 @@ GPS transmitters to supplement the positional data with higher accuracy informat
 
 <div>
 
-![](Images/argos.png)
+![](images/session2/argos.png)
 
 </div>
 :::
@@ -1029,7 +1056,7 @@ is included).
 
 <div>
 
-![](Images/argos_table.jpg)
+![](images/session2/argos_table.jpg)
 
 </div>
 :::
@@ -1045,7 +1072,7 @@ The structure for data obtained using ARGOS devices after running it through a p
 by additinal variables including **error radius, semi-major axis, semi-minor axis, ellipse orientation.** Tags used in marine tracking also collect additional
 environmental data including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
 
-![](Images/argos_data_structure.png)
+![](images/session2/argos_data_structure.png)
 
 <br>
 
@@ -1079,7 +1106,7 @@ tags are often also paired with other technologies (e.g., GSM mobile phone techn
 </div>
 
 <div>
-![](Images/gps.png)
+![](images/session2/gps.png)
 </div>
 :::
 
@@ -1093,7 +1120,7 @@ The structure for data obtained using GPS devices is a lot more simpler than oth
 **of detection, estimated latitude, estimated longitude**. Like with ARGOS tags, GPS tags for marine research also often collect a range of environmental data
 including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
 
-![](Images/gis_data_structure.png)
+![](images/session2/gis_data_structure.png)
 
 <br>
 
@@ -1140,11 +1167,11 @@ to detach from the tagged animal before transmitting information back to the res
 
 <br><br>
 
-![](Images/gls.png)
+![](images/session2/gls.png)
 
 <br><br><br><br><br>
 
-![](Images/minipat.jpg)
+![](images/session2/minipat.jpg)
 
 </div>
 :::
@@ -1166,7 +1193,7 @@ The structure for data obtained using GLS devices after running it through a pos
 **estimated latitude, estimated longitude, error in latitudinal estimate and longitudinal estimate**. The tags used in marine tracking will also collect and transmit
 environmental data including **depth and water temperature**, and can be set to collect other biological data including (but not limited to) **acceleration**.
 
-![](Images/gls_data_structure.png)
+![](images/session2/gls_data_structure.png)
 
 <br>
 
@@ -1259,7 +1286,7 @@ The package has a clear workflow, and we can walk through the first 4 steps to p
 
 <div>
 
-![](Images/animotum_schematic.jpg)
+![](images/session2/animotum_schematic.jpg)
 
 </div>
 :::
@@ -1468,7 +1495,7 @@ We can use the `grab()` function to extract specific components of the model out
 the other packages we have covered here like `ggspatial` and `mapview`. The `grab()` function also allows users to extract the positional data as a `sf` object
 and makes it so easy to them plot them using other packages.
 
-```{r, out.width = '100%'}
+```{r, out.width = '100%', message=FALSE, warning=FALSE}
 ## Lets plot our own version of the predicted component using mapview
 
 pred_data <- grab(fit, 
@@ -1491,11 +1518,13 @@ pred_path <-
 library(mapview)
 library(leaflet)
 
+color_palette <- colorRampPalette(hcl.colors(10, palette = "Reds 3"))
+
 m_130 <-
   mapview(pred_path %>% filter(id %in% "M-130"), alpha = 1, color = "white", homebutton = F, 
           legend = F, map.type = c("Esri.WorldImagery"), layer.name = "M-130") +
   mapview(pred_data %>% filter(id %in% "M-130"), alpha.regions = 1, alpha = 0, zcol = "g",
-          homebutton = F, legend = F, cex = 3, layer.name = "M-130", col.regions = heat.colors(183)) +
+          homebutton = F, legend = F, cex = 3, layer.name = "M-130", col.regions = color_palette(100)) +
   mapview(pred_data %>% filter(id %in% "M-130") %>% slice(1), alpha.regions = 1, alpha = 0,
           col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-130") +
   mapview(pred_data %>% filter(id %in% "M-130") %>% slice(n()), alpha.regions = 1, alpha = 0,
@@ -1505,17 +1534,22 @@ m_150 <-
   mapview(pred_path %>% filter(id %in% "M-150"), alpha = 1, color = "white", homebutton = F, 
           legend = F, map.type = c("Esri.WorldImagery"), layer.name = "M-150") +
   mapview(pred_data %>% filter(id %in% "M-150"), alpha.regions = 1, alpha = 0, zcol = "g",
-          homebutton = F, legend = F, cex = 3, layer.name = "M-150", col.regions = rev(heat.colors(107))) +
+          homebutton = F, legend = F, cex = 3, layer.name = "M-150", col.regions = color_palette(100)) +
   mapview(pred_data %>% filter(id %in% "M-150") %>% slice(1), alpha.regions = 1, alpha = 0,
           col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-150") +
   mapview(pred_data %>% filter(id %in% "M-150") %>% slice(n()), alpha.regions = 1, alpha = 0,
           col.regions = "firebrick", homebutton = F, legend = F, layer.name = "M-150")
 
-  
+mm <- 
 (m_130 + m_150)@map %>% 
   addLayersControl(
         baseGroups = c("M-130", "M-150"),
-        options = layersControlOptions(collapsed = FALSE))
+        options = layersControlOptions(collapsed = FALSE)) %>% 
+  addLegend(colors = color_palette(11), 
+            labels = round(seq(0, 1, by = 0.1), 2),
+            title = "g", opacity = 1)
+
+mm
 
 ```
 
@@ -1551,7 +1585,7 @@ and explore 3D animal space use if depth data was also collected (e.g., [KUD3D](
 
 |                           |
 |:--------------------------|
-| ![](images/telemetry.png) |
+| ![](images/session3/telemetry.png) |
 
 <br>
 
@@ -1563,6 +1597,11 @@ Acoustic Telemetry makes it possible for multiple animals to be monitored over l
 Information obtained from acoustic telemetry can inform habitat use, home range size, effectiveness of marine protected areas, refinement of stock assessment,
 and migratory patterns.
 
+
+<div class="text-toggle">
+<button onclick="toggleText()">Click here to learn more about Acoustic Telemetry</button>
+<div id="hidden-text">
+
 <style>
 div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 </style>
@@ -1572,7 +1611,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 ##### Acoustic transmitters
 
-![](Images/Transmitter.gif)
+![](images/session3/Transmitter.gif)
 
 <br>
 
@@ -1585,8 +1624,6 @@ where tags transmit a sequence of coded pulses.
 
 <div>
 
-<br>
-
 Acoustic transmitters have been developed and commercially produced by a number of manufacturers. One manufacturer that has developed this technology within Australia
 and Asia is [Innovasea](https://www.innovasea.com/fish-tracking/), however there are a range of other manufacturers that produce similar tracking technologies. 
 Transmitters developed by Innovasea range in size from 15 - 98mm, with the largest tags having a battery life of 10 years. Depending on the size, shape and behaviour 
@@ -1597,21 +1634,17 @@ tagged externally using transmitters tethered to specialised dart tags.
 
 <div>
 
-<br>
-
-![](Images/Tag sizes.png) 
+![](images/session3/Tag sizes.png) 
 
 </div>
 
 :::
 
-![](Images/External tag.png) 
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
+![](images/session3/External tag.png) 
 
 ##### Acoustic Receivers
 
-![](Images/Receiver.gif)
+![](images/session3/Receiver.gif)
 
 <br>
 
@@ -1625,7 +1658,7 @@ depends on a range of factors, that can vary through time and depending on the d
 
 <br>
 
-![](Images/Receiver 1.png)
+![](images/session3/Receiver 1.png)
 
 <br>
 
@@ -1640,7 +1673,7 @@ and allow for long-term continuous monitoring. The design of the receiver array 
 within the study site. [Heupel et al. 2006](https://doi.org/10.1071/MF05091) provides a good review of possible designs of acoustic arrays, including grids and curtains,
 to track marine animals.
 <br>
-![](Images/ArrayDesign.png)
+![](images/session3/ArrayDesign.png)
 
 </div>
 
@@ -1648,15 +1681,85 @@ to track marine animals.
 
 </div>
 
-------------------------------------------------------------------------------------------------------------------------------------------------------
+</div>
+</div>
 
+<br>
+
+In this session we will go through a brief walk through of how we can use the `VTrack` R package to quickly format and analyse large acoustic tracking
+datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
+called `remora` that helps users to interactively explore their data as well as append environmental data to detections to further your analysis
+of animal movements. Here we are just arming you with multiple tools to be able to analyse your data. Which analysis (and thus R package) is more appropriate
+and suitable to your dataset will depend on your study design, research questions and data available. 
+
+<br>
+
+[**You can download the dataset we will use for this session from [here](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/Session%203.zip).**]{style="color:firebrick"}
+[**The link should download a zip file with four .csv files that we will use during this session.**]{style="color:firebrick"}
+
+<br>
 
 <a id="session3"></a>
 
 #### {.tabset .tabset-fade}
 
-##### Structure of acoustic telemetry data
+##### Structure of acoustic telemetry data {.tabset .tabset-fade .tabset-pills}
 
+Currently there are several data management tools that are extremely useful in storing, cleaning, exploring and analysing data obtained using Acoustic
+Telemetry. One that everyone here may be familiar with is the ***VUE*** software that you have been using to communicate with Innovasea receivers
+to offload and store data. In addition to software, several online data repositories exist to store and share acoustic telemetry data. The 
+[Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) maintained by IMOS ATF houses acoustic telemetry datasets collected 
+in Australia and users can store and access acoustic telemetry data through the database. Each data source have their own data export formats, which are 
+not always interchangeable when using with **R** packages. In addition to this, new formats have now been developed via the ***Fathom*** platform to 
+effectively store and export data.
+
+In general, acoustic telemetry datasets have at least 3 components that are required for analyses:
+
+1.  **Detection data:** This includes the only the presence of tagged individuals on specific receivers.
+2.  **Transmitter metadata:** This includes metadata information on the tag specifications. Sometimes this also includes metadata of the animal
+    tagged.
+3.  **Acoustic array metadata:** This includes coordinates of all the recievers used to monitor tagged animals in the study system.
+
+
+Here we will go through 2 different formats that acoustic telemetry data can come in, and how each are structured. This is not an extensive list, but
+just includes the main formats currently used by software and expected by R packages.
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+###### VUE format
+
+Exporting detection data from VUE provides only a single file. This includes only the detection data. The researcher is responsible to keep metadata
+for each receiver within the array and tag deployment, which are also needed for a full analysis.
+
+![](images/session3/vue.png) 
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### IMOS ATF format
+
+Detection data exported from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) has its own format. The database
+website allows reasearchers to access and download detection, tag metadata and receiver metadata for a selected tagging project. This data export have
+a large number of columns that provide a comprehensive information associated with each detection, tag or receiver. The format of the detection data
+include the following 32 column names:
+
+![](images/session3/imos_detections.png)
+
+The database webpage also allows users to download complementary receiver metadata that has 15 columns:
+
+![](images/session3/imos_recmeta.png)
+
+As well as tag metadata with 24 columns:
+
+![](images/session3/imos_tagmeta.png)
+
+If size and other biological variables were collected for individuals (can be multiple measures) and additional `animal measures` file can be
+downloaded:
+
+![](images/session3/imos_meas.png) 
 
 <br>
 
@@ -1671,16 +1774,252 @@ to track marine animals.
 
 <br>
 
-In this session we will go through a brief walk through of how we can use the *VTrack* R package to quickly format and analyse large acoustic tracking
-datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
-called *re**mo**ra* that helps users to interactively explore their data as well as append environmental data to detections to further your analysis
-of animal movements.
+The **VTrack** package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
+have a more comprehensive walk through of **VTrack**, go through the examples on [this
+page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
 
-Here we are just arming you with multiple tools to be able to analyse your data. Which analysis (and thus R package) is more appropriate and suitable
-to your dataset will depend on your study design, research questions and data available. For this session, we will use the same data you worked on in
-session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset*** in the data folder you have downloaded.
+```{r, eval = FALSE}
+## Install packages
+install.packages("remotes")
+remotes::install_github("rossdwyer/VTrack")
+```
+   
+<br>
 
-<br><br>
+If you R asks you if you would like to update packages, select **No**. This seems to be an issue with some people attempting to install packages from
+Github. You can update other packages separately if you feel that you need to, however doing it while installing a package from GitHub often stalls
+the whole process.
+
+```{r, eval = FALSE}
+## Load other useful packages
+library(VTrack)
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(mapview)
+```
+
+<br>
+
+###### Input, explore and format data from IMOS repository to use in VTrack
+
+Lets have a look at the detection, tag and receiver/station metadata in R using the tidyverse.
+
+```{r, eval = FALSE}
+detections <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv")
+
+tag_metadata <- 
+  read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv") %>% 
+  left_join(read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv"))
+      
+station_info <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv")
+```
+
+<br>
+
+We will then format it so that **VTrack** can read the column names correctly
+
+```{r, eval = FALSE}
+detections <-
+  detections %>% 
+  transmute(transmitter_id = transmitter_id,
+            station_name = station_name,
+            receiver_name = receiver_name,
+            detection_timestamp = detection_datetime,
+            longitude = receiver_deployment_longitude,
+            latitude = receiver_deployment_latitude,
+            sensor_value = transmitter_sensor_raw_value,
+            sensor_unit = transmitter_sensor_unit)
+
+tag_metadata <-
+  tag_metadata %>% 
+  transmute(tag_id = transmitter_deployment_id,
+            transmitter_id = transmitter_id,
+            scientific_name = species_scientific_name,
+            common_name = species_common_name,
+            tag_project_name = tagging_project_name,
+            release_id = transmitter_deployment_id,
+            release_latitude = transmitter_deployment_latitude,
+            release_longitude = transmitter_deployment_longitude,
+            ReleaseDate = transmitter_deployment_datetime,
+            tag_expected_life_time_days = transmitter_estimated_battery_life,
+            tag_status = transmitter_status,
+            sex = animal_sex,
+            measurement = measurement_value)
+
+station_info <-
+  station_info %>% 
+  transmute(station_name = station_name,
+            receiver_name = receiver_name,
+            installation_name = installation_name,
+            project_name = receiver_project_name,
+            deploymentdatetime_timestamp = receiver_deployment_datetime,
+            recoverydatetime_timestamp = receiver_recovery_datetime,
+            station_latitude = receiver_deployment_latitude,
+            station_longitude = receiver_deployment_longitude,
+            status = active)
+```
+
+<br>
+
+Explore these datasets and see if the columns line up with the correct data. We can now setup the data so that **VTrack** can then read and analyse
+data properly
+
+```{r, eval = FALSE}
+input_data <- setupData(Tag.Detections = detections,
+                        Tag.Metadata = tag_metadata,
+                        Station.Information = station_info,
+                        source = "IMOS",
+                        crs = sp::CRS("+init=epsg:4326"))
+
+summary(input_data)
+```
+
+<br>
+
+The setup data is now a list containing all the components of data required for analyses. You can access each component seperately by selecting each
+component of the list
+
+```{r, eval = FALSE}
+input_data$Tag.Detections
+
+input_data$Tag.Metadata
+
+input_data$Station.Information
+```
+
+
+<br>
+
+###### Examine patterns in detection and dispersal
+
+We can start by creating simple detection plots and maps to look at patterns of detection and get more familiar with your data
+
+```{r, eval = FALSE}
+## use the VTrack function for a simple abacus plot
+abacusPlot(input_data)
+```
+![](Images/VTrack/vtrack_1.png)
+
+<br>
+
+Instead of this simple output, you can also plot your own version of the abacus plot and include more details
+
+```{r, eval = FALSE}
+## plot your own!
+combined_data <- 
+  input_data$Tag.Detections %>% 
+  left_join(input_data$Station.Information)
+
+combined_data %>% 
+  mutate(date = date(Date.Time)) %>% 
+  group_by(Transmitter, Station.Name, date, Installation) %>% 
+  summarise(num_detections = n()) %>% 
+  ggplot(aes(x = date, y = Transmitter, size = num_detections, color = Installation)) +
+  geom_point() +
+  labs(size = "Number of Detections", color = "Installation Name") +
+  theme_bw()
+```
+
+![](Images/VTrack/vtrack_2.png)
+
+<br>
+
+You can also map the data to explore spatial patterns
+
+```{r, eval = FALSE}
+## Map the data
+combined_data %>% 
+  group_by(Station.Name, Latitude, Longitude, Transmitter, Installation) %>% 
+  summarise(num_detections = n()) %>% 
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>% 
+  mapview(cex = "num_detections", zcol = "Installation")
+```
+![](Images/VTrack/vtrack_3.png)
+
+
+<br>
+
+We can now use the *`detectionSummary()`* and *`dispersalsSummary()`* functions to calculate overall and monthly subsetted detection and dispersal
+metrics
+
+```{r, eval = FALSE}
+## Summarise detections patterns
+det_sum <- detectionSummary(ATTdata = input_data, sub = "%Y-%m")
+
+summary(det_sum)
+```
+
+<br>
+
+Here we have set the `sub` parameter to `%Y-%m` (monthly subset), weekly subsets can also be calculated using `%Y-%W`. The function calculates Overall
+metrics as well as subsetted metrics, you can access them by selecting each component of the list output.
+
+```{r, eval = FALSE}
+det_sum$Overall
+det_sum$Subsetted
+```
+
+<br>
+
+We can then plot the results to have a look at monthly patterns in detection index between sexes of bull sharks tracked throughout the project
+
+```{r, eval = FALSE}
+monthly_detection_index <-
+  det_sum$Subsetted %>% 
+  mutate(date = lubridate::ymd(paste(subset, 01, "-")),
+         month = month(date, label = T, abbr = T)) %>% 
+  group_by(Sex, month) %>% 
+  summarise(mean_DI = mean(Detection.Index),
+            se_DI = sd(Detection.Index)/sqrt(n()))
+
+monthly_detection_index %>% 
+  ggplot(aes(x = month, y = mean_DI, group = Sex, color = Sex,
+             ymin = mean_DI - se_DI, ymax = mean_DI + se_DI)) +
+  geom_point() +
+  geom_path() +
+  geom_errorbar(width = 0.2) +
+  labs(x = "Month of year", y = "Mean Detection Index") +
+  theme_bw()
+```     
+
+![](Images/VTrack/vtrack_4.png)
+<br>
+
+Similarly, we can use the *`dispersalSummary()`* function to do the same analysis to understand how dispersal distances moved by individuals change
+over the year for each sex of bull shark.
+
+```{r, eval = FALSE}
+## Summarise dispersal patterns
+disp_sum <- dispersalSummary(ATTdata = input_data)
+
+disp_sum
+
+monthly_dispersal <-
+  disp_sum %>% 
+  mutate(month = month(Date.Time, label = T, abbr = T)) %>% 
+  group_by(Sex, month) %>% 
+  summarise(mean_disp = mean(Consecutive.Dispersal),
+            se_disp = sd(Consecutive.Dispersal)/sqrt(n()))
+
+monthly_dispersal %>% 
+  ggplot(aes(x = month, y = mean_disp, group = Sex, color = Sex,
+             ymin = mean_disp - se_disp, ymax = mean_disp + se_disp)) +
+  geom_point() +
+  geom_path() +
+  geom_errorbar(width = 0.2) +
+  labs(x = "Month of year", y = "Mean Dispersal distance (m)") +
+  theme_bw()
+```     
+![](Images/VTrack/vtrack_5.png)
+
+<br>
+
+Like I mentioned above, since we have limited time to go through all the features of **VTrack** today, please go have a look
+[here](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html) to go through a more in-depth example of how the package can be used to calculate
+and visualise activity space estimates for large acoustic telemetry datasets.
+
+<br> <br>
 
 <br> <br>
 
@@ -1693,6 +2032,316 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 ##### Explore your data with ***re***mo***ra***
 
 <br>
+
+For this part of the session, we will go through some of the functionality of the new *re**mo**ra* package. This package was created to assist users of the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) to easily explore and analyse their data. The intention is that data exported and downloaded from the web portal can feed directly into the package to do quick analyses. The package also enables the integration of animal telemetry data with oceanographic observations collected by IMOS and other ocean observing programs. The package includes functiosn that: 
+
+- Interactively explore animal movements in space and time from acoustic telemetry data
+- Perform robust quality-control of acoustic telemetry data using the method described by [Hoenner et al. 2018](https://www.nature.com/articles/sdata2017206)
+- Identify available remote sensed and sub-surface, in-situ oceanographic datasets that spatially and temporally overlap animal movement data
+- Once identified, the package assists in extracting and appending these variables to the movement data
+
+<br>
+
+The package follows the following rough workflow to enable project reporting, data quality control and environmental data extraction:
+
+![](Images/remora_workflow.png)
+
+<br>
+
+The package can be installed from Github:
+
+```{r, eval = FALSE}
+## Install packages
+install.packages("remotes")
+remotes::install_github("IMOS-AnimalTracking/remora", build_vignettes = TRUE)
+
+```
+
+Once downloaded you can explore the functionality of the package using vignettes that describe the different functions
+
+```{r, eval = FALSE}
+library(remora)
+browseVignettes(package = "remora")
+```
+
+<br>
+
+Lets load other useful packages for this session
+
+```{r, eval = FALSE}
+library(tidyverse)
+library(sf)
+library(mapview)
+library(ggspatial)
+```
+
+<br>
+
+Now we can use one of the main functions of the package `shinyReport()` to interactively explore data. 
+
+We can use this function to create a report based on your receiver data or transmitter data. Both these reports produce lots of interesting metrics and maps to explore your data in depth.
+
+```{r, eval = FALSE}
+## Create and explore a receiver array report
+shinyReport(type = "receivers")
+
+## Create and explore a transmitter report
+shinyReport(type = "transmitters")
+```
+
+![](Images/shinyreport.png)
+
+<br>
+
+For more information on these functions check out the vignette in the remora package
+
+```{r, eval = FALSE}
+vignette("shinyReport_receivers", package = "remora")
+vignette("shinyReport_transmitters", package = "remora")
+```
+
+<br>
+
+
+###### Undertaking Quality control checks on your raw detection data
+
+We an now use the functionality of *re**mo**ra* to conduct quality control checks with our **IMOS Workshop_Bull-shark-sample-dataset** in the data folder.
+
+For the package to find all the data in the correct place, we will make a list of locations of where all our particular files live on your computer.
+
+```{r, eval = FALSE}
+files <- list(det = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv",
+              rmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv",
+              tmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv",
+              meas = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv")
+
+files
+```
+
+<br>
+
+We can now use the `runQC()` function to conduct a comprehensive quality control algorithm
+
+
+```{r, eval = FALSE}
+tag_qc <- runQC(x = files, .parallel = TRUE, .progress = TRUE)
+```
+
+<br>
+
+After running this code, each detection will have additional columns appended to it. These columns provide the results of each of 7 quality check conducted during this step. The QC algorithm tests 7 aspects of the detection data and grades each test as per below. An overall `Detection_QC` value is then calculated to provide rankings of **1:** ***valid***; **2:** ***likely valid***; **3:** ***unlikely valid***; or **4:** ***invalid detection***
+
+![](Images/QC/qc_tab.png)
+<br>
+
+You can now access each component of the results of the QC process using the `grabQC()` function
+
+```{r, eval = FALSE}
+## this will only grab the QC flags resulting from the algorithm
+grabQC(tag_qc, what = "QCflags")
+
+## this will extract all the relevant data as well as only detections that were deemed `valid` and `likely valid`
+qc_data <- grabQC(tag_qc, what = "dQC", flag = c("valid", "likely valid"))
+qc_data
+```
+
+<br>
+
+We can now visualise the QC detection process, mapping detections and their resulting QC flags
+
+```{r, eval = FALSE}
+plotQC(tag_qc)
+```
+
+![](Images/QC/Bull_Shark_QC.png)
+
+<br>
+
+For more information on these functions check out the vignette in the remora package
+
+```{r, eval = FALSE}
+vignette("runQC", package = "remora")
+```
+
+<br>
+
+###### Extracting and appending environmental variables to acoustic telemetry data
+
+We can also use *re**mo**ra* to identify environmental data (currently only within Australia) that overlap (spatially and temporally) with your animal telemetry data.
+The full list of variables you can access and append directly from R can be found using the `imos_variables()` function.
+
+```{r, eval = FALSE}
+imos_variables()
+```
+
+<br>
+
+**Remote sensed environmental variables**
+
+All the variables prefixed with `rs_` in the resulting table are rasterised remote sensed data that can be accessed. We can access and extract rasterised remote sensed data using the `extractEnv()` function
+
+For this example, lets use a smaller subset of the example dataset so we dont have to wait to download heaps of environmental data.
+
+```{r, eval = FALSE}
+subsetted_data <- 
+  qc_data %>%
+  filter(installation_name %in% c("IMOS-ATF Coffs Harbour line"))
+```
+
+<br>
+
+We will use the function to extract modelled (interpolated) Sea surface temperature (`rs_sst_interpolated`) across a subset of the bull shark data detected at the Coffs Harbour Line. This function requires at the very least coordinates and a timestamp (*X*, *Y* and *datetime* parameters) to run. The function is therefore not restricted to acoustic telemetry data only, and can be used for other spatial data from satellite tags or even occurrence data.
+
+```{r, eval = FALSE}
+sst_extract <-
+  extractEnv(df = extracted_data,
+             X = "receiver_deployment_longitude", 
+             Y = "receiver_deployment_latitude", 
+             datetime = "detection_datetime",
+             env_var = "rs_sst_interpolated",
+             cache_layers = TRUE,
+             crop_layers = TRUE,
+             full_timeperiod = FALSE,
+             folder_name = "sst",
+             .parallel = TRUE)
+```
+
+Explore the resulting data frame. It will have an additional column with the appended data
+
+```{r, eval = FALSE}
+sst_extract$rs_sst_interpolated
+```
+
+<br>
+
+We can now plot the detections along with the appended SST data that can be used for further analysis
+
+```{r, eval = FALSE}
+## plot SST data with detection data
+summarised_data <-
+  sst_extract %>% 
+  mutate(date = as.Date(detection_datetime)) %>% 
+  group_by(transmitter_id, date) %>% 
+  summarise(num_det = n(),
+            mean_sst = mean(rs_sst_interpolated, na.rm = T))
+
+ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color = mean_sst)) +
+  geom_point() +
+  scale_color_viridis_c() +
+  labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
+       y = NULL, color = "SST (˚C)", size = "Number of\nDetections") +
+  theme_bw()
+```
+
+<br>
+
+This workshop covers only the basics of this function. To learn more features including gap filling and buffering functionality check out the function vignette
+
+```{r, eval = FALSE}
+vignette("extractEnv", package = "remora")
+```
+
+<br>
+
+**In-situ data from mooring data from the IMOS National Mooring Network**
+
+If sub-sea variables are of interest, then the *re**mo**ra* package can be used to access, extract and append data from the nearest Oceanographic mooring deployed by the IMOS National Mooring Network. This can be done using the `extractMoor()` function. But before using this, we need to find the moorings that would be most relevant.
+
+<br>
+
+Lets use the full example dataset to see which moorings would be the closest and provide in-situ temperature data.
+We can access the metadata for all moorings that record temperature data
+
+
+```{r, eval = FALSE}
+moor_temp <- mooringTable(sensorType = "temperature")
+```
+
+we can now map the full network
+
+<br>
+
+```{r, eval = FALSE}
+moor_temp %>% 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>% 
+  mapview(popup = paste("Site code", moor_temp$site_code,"<br>",
+                        "URL:", moor_temp$url, "<br>",
+                        "Standard names:", moor_temp$standard_names, "<br>",
+                        "Coverage start:", moor_temp$time_coverage_start, "<br>",
+                        "Coverage end:", moor_temp$time_coverage_end),
+          col.regions = "red", color = "white", layer.name = "IMOS Mooring")
+```
+
+![](Images/Mooring data/moorMap.png)
+
+
+<br>
+
+
+We can now find the closest mooring to our animal detections in both space (using the `getDistance()` function) and time (using the `getOverlap()` function)
+
+```{r, eval = FALSE}
+# identify nearest mooring in space
+det_dist <- getDistance(trackingData = qc_data,
+                        moorLocations = moor_temp,
+                        X = "receiver_deployment_longitude",
+                        Y = "receiver_deployment_latitude",
+                        datetime = "detection_datetime")
+
+# identify moorings that have overlapping data with detections
+mooring_overlap <- getOverlap(det_dist)
+
+# only select moorings with 100% temporal overlap (Poverlap = 1)
+mooring_overlap <-
+  mooring_overlap %>% 
+  filter(Poverlap == 1)
+```
+
+<br>
+
+Now that we have identified the moorings to extract data from we can run the `mooringDownload()` and `moorExtract()` functions
+
+```{r, eval = FALSE}
+## Download mooring data from closest moorings
+moorIDs <- unique(mooring_overlap$moor_site_code)
+
+moor_data <- mooringDownload(moor_site_codes = moorIDs,
+                             sensorType = "temperature",
+                             fromWeb = TRUE,
+                             file_loc = "imos.cache/moor/temperature")
+```
+
+<br>
+
+We can now visualise the temperature profile data alongside the animal detection data for a temporal subset of the data
+
+```{r, eval = FALSE}
+## Plot depth time of temperature from one mooring along with the detection data
+start_date <- "2020-01-01"
+end_date <- "2020-02-01"
+
+plotDT(moorData = moor_data$CH050, 
+       moorName = "CH050",
+       dateStart = start_date, dateEnd = end_date,
+       varName = "temperature",
+       trackingData = det_dist,
+       speciesID = "Carcharhinus leucas",
+       IDtype = "species_scientific_name",
+       detStart = start_date, detEnd = end_date)
+```
+![](Images/Mooring data/plotDT.png)
+
+<br>
+
+
+Like the other functions of *re**mo**ra* we have covered quickly above, there is far more functionality that we just dont have time to cover here. 
+To learn more features including accessing and appending other data and at specific depths check out the function's vignette
+
+```{r, eval = FALSE}
+vignette("extractMoor", package = "remora")
+```
+
+
 
 <br><br><br><br>
 
