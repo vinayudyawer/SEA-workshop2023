@@ -1597,6 +1597,7 @@ Acoustic Telemetry makes it possible for multiple animals to be monitored over l
 Information obtained from acoustic telemetry can inform habitat use, home range size, effectiveness of marine protected areas, refinement of stock assessment,
 and migratory patterns.
 
+<br>
 
 <div class="text-toggle">
 <button onclick="toggleText()">Click here to learn more about Acoustic Telemetry</button>
@@ -1686,6 +1687,10 @@ to track marine animals.
 
 <br>
 
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<br>
+
 In this session we will go through a brief walk through of how we can use the `VTrack` R package to quickly format and analyse large acoustic tracking
 datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
 called `remora` that helps users to interactively explore their data as well as append environmental data to detections to further your analysis
@@ -1710,8 +1715,7 @@ Telemetry. One that everyone here may be familiar with is the ***VUE*** software
 to offload and store data. In addition to software, several online data repositories exist to store and share acoustic telemetry data. The 
 [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) maintained by IMOS ATF houses acoustic telemetry datasets collected 
 in Australia and users can store and access acoustic telemetry data through the database. Each data source have their own data export formats, which are 
-not always interchangeable when using with **R** packages. In addition to this, new formats have now been developed via the ***Fathom*** platform to 
-effectively store and export data.
+not always interchangeable when using with **R** packages. 
 
 In general, acoustic telemetry datasets have at least 3 components that are required for analyses:
 
@@ -1720,6 +1724,7 @@ In general, acoustic telemetry datasets have at least 3 components that are requ
     tagged.
 3.  **Acoustic array metadata:** This includes coordinates of all the recievers used to monitor tagged animals in the study system.
 
+<br>
 
 Here we will go through 2 different formats that acoustic telemetry data can come in, and how each are structured. This is not an extensive list, but
 just includes the main formats currently used by software and expected by R packages.
@@ -1739,7 +1744,11 @@ for each receiver within the array and tag deployment, which are also needed for
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-##### IMOS ATF format
+[Back to top](#session3)
+
+<br><br>
+
+###### IMOS ATF format
 
 Detection data exported from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) has its own format. The database
 website allows reasearchers to access and download detection, tag metadata and receiver metadata for a selected tagging project. This data export have
@@ -1774,21 +1783,9 @@ downloaded:
 
 <br>
 
-The **VTrack** package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
-have a more comprehensive walk through of **VTrack**, go through the examples on [this
-page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
-
-```{r, eval = FALSE}
-## Install packages
-install.packages("remotes")
-remotes::install_github("rossdwyer/VTrack")
-```
+The `VTrack` package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
+have a more comprehensive walk through of `VTrack`, go through the examples on [this page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
    
-<br>
-
-If you R asks you if you would like to update packages, select **No**. This seems to be an issue with some people attempting to install packages from
-Github. You can update other packages separately if you feel that you need to, however doing it while installing a package from GitHub often stalls
-the whole process.
 
 ```{r, eval = FALSE}
 ## Load other useful packages
@@ -1797,27 +1794,34 @@ library(tidyverse)
 library(lubridate)
 library(sf)
 library(mapview)
+
 ```
 
 <br>
 
-###### Input, explore and format data from IMOS repository to use in VTrack
+**Input, explore and format data from IMOS repository to use in VTrack**
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Lets have a look at the detection, tag and receiver/station metadata in R using the tidyverse.
 
 ```{r, eval = FALSE}
-detections <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv")
+
+detections <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%203/IMOS_detections.csv')
 
 tag_metadata <- 
-  read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv") %>% 
-  left_join(read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv"))
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%203/IMOS_transmitter_deployment_metadata.csv') %>% 
+  left_join(read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%203/IMOS_animal_measurements.csv'))
       
-station_info <- read_csv("data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv")
+station_info <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%203/IMOS_receiver_deployment_metadata.csv')
+
 ```
 
 <br>
 
-We will then format it so that **VTrack** can read the column names correctly
+We will then format it so that `VTrack` can read the column names correctly
 
 ```{r, eval = FALSE}
 detections <-
@@ -1858,48 +1862,56 @@ station_info <-
             station_latitude = receiver_deployment_latitude,
             station_longitude = receiver_deployment_longitude,
             status = active)
+
 ```
 
 <br>
 
-Explore these datasets and see if the columns line up with the correct data. We can now setup the data so that **VTrack** can then read and analyse
+Explore these datasets and see if the columns line up with the correct data. We can now setup the data so that `VTrack` can then read and analyse
 data properly
 
 ```{r, eval = FALSE}
+
 input_data <- setupData(Tag.Detections = detections,
                         Tag.Metadata = tag_metadata,
                         Station.Information = station_info,
                         source = "IMOS",
-                        crs = sp::CRS("+init=epsg:4326"))
+                        crs = sp::CRS("EPSG:4326"))
 
 summary(input_data)
+
 ```
 
 <br>
 
-The setup data is now a list containing all the components of data required for analyses. You can access each component seperately by selecting each
+The setup data is now a list containing all the components of data required for analyses. You can access each component separately by selecting each
 component of the list
 
 ```{r, eval = FALSE}
+
 input_data$Tag.Detections
 
 input_data$Tag.Metadata
 
 input_data$Station.Information
+
 ```
 
 
 <br>
 
-###### Examine patterns in detection and dispersal
+**Examine patterns in detection and dispersal**
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
 
 We can start by creating simple detection plots and maps to look at patterns of detection and get more familiar with your data
 
 ```{r, eval = FALSE}
 ## use the VTrack function for a simple abacus plot
 abacusPlot(input_data)
+
 ```
-![](Images/VTrack/vtrack_1.png)
+![](images/session3/vtrack_1.png)
 
 <br>
 
@@ -1907,6 +1919,7 @@ Instead of this simple output, you can also plot your own version of the abacus 
 
 ```{r, eval = FALSE}
 ## plot your own!
+
 combined_data <- 
   input_data$Tag.Detections %>% 
   left_join(input_data$Station.Information)
@@ -1919,35 +1932,42 @@ combined_data %>%
   geom_point() +
   labs(size = "Number of Detections", color = "Installation Name") +
   theme_bw()
+
 ```
 
-![](Images/VTrack/vtrack_2.png)
+![](images/session3/vtrack_2.png)
 
 <br>
 
 You can also map the data to explore spatial patterns
 
 ```{r, eval = FALSE}
+
 ## Map the data
+
 combined_data %>% 
   group_by(Station.Name, Latitude, Longitude, Transmitter, Installation) %>% 
   summarise(num_detections = n()) %>% 
   st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>% 
   mapview(cex = "num_detections", zcol = "Installation")
+
 ```
-![](Images/VTrack/vtrack_3.png)
+![](images/session3/vtrack_3.png)
 
 
 <br>
 
-We can now use the *`detectionSummary()`* and *`dispersalsSummary()`* functions to calculate overall and monthly subsetted detection and dispersal
+We can now use the `detectionSummary()` and `dispersalsSummary()` functions to calculate overall and monthly subsetted detection and dispersal
 metrics
 
 ```{r, eval = FALSE}
+
 ## Summarise detections patterns
+
 det_sum <- detectionSummary(ATTdata = input_data, sub = "%Y-%m")
 
 summary(det_sum)
+
 ```
 
 <br>
@@ -1956,8 +1976,11 @@ Here we have set the `sub` parameter to `%Y-%m` (monthly subset), weekly subsets
 metrics as well as subsetted metrics, you can access them by selecting each component of the list output.
 
 ```{r, eval = FALSE}
+
 det_sum$Overall
+
 det_sum$Subsetted
+
 ```
 
 <br>
@@ -1965,6 +1988,7 @@ det_sum$Subsetted
 We can then plot the results to have a look at monthly patterns in detection index between sexes of bull sharks tracked throughout the project
 
 ```{r, eval = FALSE}
+
 monthly_detection_index <-
   det_sum$Subsetted %>% 
   mutate(date = lubridate::ymd(paste(subset, 01, "-")),
@@ -1983,14 +2007,16 @@ monthly_detection_index %>%
   theme_bw()
 ```     
 
-![](Images/VTrack/vtrack_4.png)
+![](images/session3/vtrack_4.png)
 <br>
 
-Similarly, we can use the *`dispersalSummary()`* function to do the same analysis to understand how dispersal distances moved by individuals change
+Similarly, we can use the `dispersalSummary()` function to do the same analysis to understand how dispersal distances moved by individuals change
 over the year for each sex of bull shark.
 
 ```{r, eval = FALSE}
+
 ## Summarise dispersal patterns
+
 disp_sum <- dispersalSummary(ATTdata = input_data)
 
 disp_sum
@@ -2010,18 +2036,16 @@ monthly_dispersal %>%
   geom_errorbar(width = 0.2) +
   labs(x = "Month of year", y = "Mean Dispersal distance (m)") +
   theme_bw()
-```     
-![](Images/VTrack/vtrack_5.png)
 
+```     
+![](images/session3/vtrack_5.png)
 <br>
 
-Like I mentioned above, since we have limited time to go through all the features of **VTrack** today, please go have a look
+Like I mentioned above, since we have limited time to go through all the features of `VTrack` today, please go have a look
 [here](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html) to go through a more in-depth example of how the package can be used to calculate
 and visualise activity space estimates for large acoustic telemetry datasets.
 
-<br> <br>
-
-<br> <br>
+<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2033,7 +2057,10 @@ and visualise activity space estimates for large acoustic telemetry datasets.
 
 <br>
 
-For this part of the session, we will go through some of the functionality of the new *re**mo**ra* package. This package was created to assist users of the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) to easily explore and analyse their data. The intention is that data exported and downloaded from the web portal can feed directly into the package to do quick analyses. The package also enables the integration of animal telemetry data with oceanographic observations collected by IMOS and other ocean observing programs. The package includes functiosn that: 
+For this part of the session, we will go through some of the functionality of the new *`re**mo**ra* package. This package was created to assist users of 
+the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) to easily explore and analyse their data. The intention is that 
+data exported and downloaded from the web portal can feed directly into the package to do quick analyses. The package also enables the integration of 
+animal telemetry data with oceanographic observations collected by IMOS and other ocean observing programs. The package includes functiosn that: 
 
 - Interactively explore animal movements in space and time from acoustic telemetry data
 - Perform robust quality-control of acoustic telemetry data using the method described by [Hoenner et al. 2018](https://www.nature.com/articles/sdata2017206)
@@ -2044,40 +2071,24 @@ For this part of the session, we will go through some of the functionality of th
 
 The package follows the following rough workflow to enable project reporting, data quality control and environmental data extraction:
 
-![](Images/remora_workflow.png)
+![](images/session3/remora_workflow.png)
 
 <br>
 
-The package can be installed from Github:
+Today, due to limited time available, we will only go through one very useful aspect of the package; the **project reporting and data visualisation** functions.
+You can explore the full functionality of the package using vignettes that describe the different functions.
 
 ```{r, eval = FALSE}
-## Install packages
-install.packages("remotes")
-remotes::install_github("IMOS-AnimalTracking/remora", build_vignettes = TRUE)
 
-```
-
-Once downloaded you can explore the functionality of the package using vignettes that describe the different functions
-
-```{r, eval = FALSE}
 library(remora)
+
 browseVignettes(package = "remora")
+
 ```
 
 <br>
 
-Lets load other useful packages for this session
-
-```{r, eval = FALSE}
-library(tidyverse)
-library(sf)
-library(mapview)
-library(ggspatial)
-```
-
-<br>
-
-Now we can use one of the main functions of the package `shinyReport()` to interactively explore data. 
+Once the package is loaded we can use one of the main functions of the package `shinyReport()` to interactively explore data. 
 
 We can use this function to create a report based on your receiver data or transmitter data. Both these reports produce lots of interesting metrics and maps to explore your data in depth.
 
