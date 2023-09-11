@@ -17,13 +17,7 @@ editor_options:
 ---
 
 ```{css, echo = FALSE}
-/* Adjust spacing for tabset headers */
-.tabset-pills .nav-item {
-  flex: 1;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
+
 ```
 
 ```{r, echo=FALSE}
@@ -62,8 +56,6 @@ page](https://github.com/vinayudyawer).
 </div>
 :::
 
-<br>
-
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### Course outline
@@ -94,8 +86,7 @@ This **R** workshop is intended to run across 3 sessions.
 -   **Session 2:** *Working with satellite telemetry data*
 
 1.  Understanding the data structure from **satellite tags**
-2.  **Processing** satellite tag data using the [*aniMotum*](https://github.com/ianjonsen/aniMotum) package
-3.  **Visualising** satellite tag data using the [*ggspatial*](https://paleolimbot.github.io/ggspatial/) package
+2.  **Processing** and **visualising** satellite tag data using the [*aniMotum*](https://github.com/ianjonsen/aniMotum) package
 
 <br>
 
@@ -104,8 +95,6 @@ This **R** workshop is intended to run across 3 sessions.
 1.  Understanding the data structure from **acoustic telemetry data**
 2.  Using the [*VTrack*](http://github.com/rossdwyer/VTrack) R package to explore patterns in animal detections and dispersal
 3.  Using the [*re**mo**ra*](https://github.com/IMOS-AnimalTracking/remora) R package to interactively explore your telemetry data
-
-<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -130,8 +119,6 @@ course following these steps:
 **3. Save all the files in a location on your computer you can find again during the workshop**
     
 </div>
-
-<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -187,13 +174,6 @@ want to download the `VTrack` package from the github repository, we can use the
 remotes::install_github("rossdwyer/VTrack")
 ```
 
-Once installing the packages we want to use, we need to load them using the `library()` function.
-
-```{r, include=TRUE, eval=FALSE, class.source = 'fold-show'}
-library(sf)
-library(VTrack)
-```
-
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -239,8 +219,6 @@ When downloading from GitHub, the R console will ask you if it should also updat
 found on CRAN (**option [2]**).
 
 </div>
-
-<br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -328,15 +306,13 @@ Click on the tabs below to progress through the first session. Lets start with e
 
 <br>
 
-Before we can analyse these data, we first need to read this dataset into R. As with most acoustic detection datasets exported from VUE or other
-acoustic telemetry data management software, our data set is in the 'comma sperated value' (.csv) format.
-
-A .csv file can simply be imported into **R** using the `read.csv` base function, and by telling R which file to load (`Blacktip_ClevelandBay.csv`)
-and where to find it (i.e. in the 'Data' folder).
+Before we can analyse these data, we first need to read this dataset into R. The 'comma sperated value' (.csv) format is a popular and effective
+way to export large datasets. This format is a prefered way to store your data, and easily import into R. A .csv file can simply be imported into 
+**R** using the `read.csv` base function, and by telling R where the file is located on your computer.
 
 ```{r, eval = FALSE, class.source = 'fold-show'}
 # Load the blacktip shark data using base read.csv function
-blacktip <- read.csv('location_of_csv_file', header = TRUE)
+blacktip <- read.csv('location_of_csv_file/Session 1/Blacktip_ClevelandBay.csv', header = TRUE)
 ```
 
 <br>
@@ -599,6 +575,11 @@ for `ggplot2`
 
 <br>
 
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
 ***`ggplot2` grammar***
 
 The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want.
@@ -650,12 +631,14 @@ You can get a list of available geometric objects using the code below:
 help.search("geom_", package = "ggplot2")
 ```
 
+</div>
+
 <br>
 
 In the below script we call the data set we have just made (`blacktip`) and then pipe it into the `ggplot()` function. We than tell ggplot that we
 want to plot a box plot.
 
-```{r, class.source = 'fold-show', fig.align = 'center'}
+```{r, class.source = 'fold-show', fig.align = 'center', message=FALSE}
 library(ggplot2)   
 
 blacktip %>%
@@ -679,7 +662,7 @@ blacktip %>%
   geom_point()
 ```
 
-**Additional Task: Now that you've plotted the raw dates, can you figure out how to plot daily detections of our tagged sharks**
+***Additional Task: Now that you've plotted the raw dates, can you figure out how to plot daily detections of our tagged sharks***
 
 We can also use the `facet_wrap()` function to explore the detection data further and look at how animals were detected at each reciever.
 
@@ -691,7 +674,7 @@ blacktip %>%
   facet_wrap(~transmitter_name, nrow=1) # This time plot seperate boxplots for each shark
 ```
 
-**Additional Task: Can you now plot this with a different colour for each shark?**
+***Additional Task: Can you now plot this with a different colour for each shark?***
 
 
 <br>
@@ -1132,11 +1115,11 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 ::: {style="display: grid; grid-template-columns: 1.5fr 1fr; grid-column-gap: 60px;"}
 <div>
 
-GLS (Geolocation sensor) tags are a specialized tracking tags that estimates a shark's position based on the timing of natural light patterns, specifically 
-sunrise and sunset. These tags are often used for tracking oceanic and pelagic sharks that roam over vast distances, but are also useful for benthic species
-that don't surface frequently. A GLS tag is equipped with light sensors that record the daily variations in ambient light levels. By analyzing the timing and 
-duration of these light patterns, the tag can estimate the shark's latitude and longitude. The estimation of coordinates from GLS tags are done using one of 
-two methods;
+GLS (Geolocation sensor) tags are a specialized tracking tags that estimates a tagged animals position based on the timing of natural light patterns, specifically 
+sunrise and sunset (learn more about how GLS analyses [here]( https://doi.org/10.1111/1365-2656.13036)). These tags are often used for tracking oceanic and pelagic
+sharks that roam over vast distances, but are also useful for benthic species that don't surface frequently. A GLS tag is equipped with light sensors that record 
+the daily variations in ambient light levels. By analyzing the timing and duration of these light patterns, the tag can estimate the shark's latitude and longitude.
+The estimation of coordinates from GLS tags are done using one of two methods:
 
 1. Threshold methods: use two successive twilight events (the times at which the recorded light level crosses a predetermined threshold) to produce a 
 location estimate.
@@ -1155,11 +1138,11 @@ to detach from the tagged animal before transmitting information back to the res
 
 <div>
 
-<br>
+<br><br>
 
 ![](Images/gls.png)
 
-<br><br><br><br>
+<br><br><br><br><br>
 
 ![](Images/minipat.jpg)
 
@@ -1193,7 +1176,7 @@ environmental data including **depth and water temperature**, and can be set to 
 
 <br><br>
 
-#### Processing satellite tag data using ***aniMotum***
+#### Processing and visualising satellite tag data using ***aniMotum***
 
 <br>
 
@@ -1266,7 +1249,7 @@ The package has a clear workflow, and we can walk through the first 4 steps to p
 
 1. Modify our data to the expected input format
 
-2. Choose and fit an appropriate State-space movement process model
+2. Choose and fit an appropriate state-space movement process model
 
 3. Check our model fit
 
@@ -1281,7 +1264,11 @@ The package has a clear workflow, and we can walk through the first 4 steps to p
 </div>
 :::
 
-<br>
+<br><br>
+
+##### Step 1: Input and format data
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Lets begin our data processing by first reading in the data, and formatting it so that the package can read it properly:
 
@@ -1292,7 +1279,7 @@ library(aniMotum)
 
 raw_data <- read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%202/Thaa_Whalesharks_ECOCEAN.csv')
 
-head(raw_data, n = 4)
+head(raw_data)
 
 ## Now lets format the data using transmute() so aniMotum can read it properly
 
@@ -1304,11 +1291,40 @@ tagdat <-
             lon = Longitude,
             lat = Latitude)
 
-head(tagdat, n = 4)
+head(tagdat)
 
 ```
 
-Now that we have formatted the data correctly, lets move onto the second step; choosing and fitting a movement model. This step allows us to model
+<br>
+
+Lets have a closer look at the data, and understand what the positional error in our data look like. We can do this quickly by plotting some maps
+or figures to assess where our positions are more accurate, and where they are not.
+
+```{r, message=FALSE, fig.align='center'}
+## Lets look at what proportion of our positional data are within each location class
+
+tagdat %>% 
+  group_by(id, lc) %>% 
+  summarise(num_pos = n()) %>% 
+  ggplot(aes(x = id, y = num_pos, fill = lc)) +
+  geom_col(position = "fill") +
+  labs(x = "Tag ID", y = "Proportion of fixes", fill = "Location\nClass") +
+  theme_bw()
+
+```
+
+It looks like a large proportion of our data have low accuracy position estimates (Location Classes A and B). This is often the same in many tracking
+studies. At this stage, we can make a decision on if we want to subset our tracking data to only include certain Location Classes, to make sure our
+positional data are accurate. However another way to get more accurate positions and retain as much data as possible, is to model the data with the 
+estimated error to predict more accurate positions.
+
+<br><br>
+
+##### Step 2: Choose and fit a movement model
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Lets try and retain as much data as we can and move onto the second step; choosing and fitting a movement model. This step allows us to model
 the data we have, and gives us the ability to then predict positions along the animals movement path to produce positions at fixed time periods. 
 This becomes important when we want to calculate metrics of movements to help define movement behaviours. There are three main movement processes
 that `aniMotum` provides: 
@@ -1319,45 +1335,209 @@ that `aniMotum` provides:
 
 You can explore the specifics of this package from the vignette [here](https://ianjonsen.github.io/aniMotum/articles/Overview.html).
 
+<br>
+
+For our data, we will use the Continuous-time move persistence model ('mp' option in the code). We can run this model by simply using the `fit_ssm()`
+function in `aniMotum`. The function requires some basic information on the dispersal ability of our study species. At the least, it asks for our
+estimate of swimming speed of our animal. Whale sharks are pretty slow swimming sharks and their average speed has been measured to be about 
+[1.5 m/s](https://www.wwf.org.uk/learn/fascinating-facts/whale-sharks). We can also use this function to predict positions at fixed time periods.
+Here lets predict a position for each day of the tracking period. 
+
 ``` {r, eval = FALSE}
 ## Lets now now fit a Continuous-time Move Persistence (MP) model to our data
 
 fit <-
   fit_ssm(x = tagdat, 
-          vmax = 1.5, 
-          model = "mp",
-          time.step = 24)
+          vmax = 1.5, ## maximum speed of whale sharks (in m/s)
+          model = "mp", ## Move persistence model
+          time.step = 24) ## predict positions every 24 hours
+```
 
-plot(fit, type = 2, what = "predicted", pages = 1, ncol = 2)
+<br>
 
-resid <- osar(fit)
+Lets explore the outputs of our model next:
 
-plot(resid, type = "ts")
-plot(resid, type = "qq")
-plot(resid, type = "acf")
+```{r, eval=TRUE, echo=FALSE}
+fit <- read_rds("data/aniMotum_fit.RDS")
+```
+```{r, fig.align = 'center', fig.height = 3, fig.width = 10, message = FALSE}
+## Lets have a look at the fitted component of the model 
+## (original data, corrected by including positional error)
 
-map(fit, what = "predicted")
-
-
-fit_sf <- grab(fit, what = "predicted", as_sf = TRUE)
-
-fit_sf %>% 
-  split(f = .$id) %>% 
-  mapview(zcol = "g")
+plot(fit, 
+     what = "fitted", ## what component of the model to plot ('fitted', 'predicted' or 'rerouted')
+     type = 2, ## type of plot to make
+     pages = 1, 
+     ncol = 2)
 
 ```
 
 <br><br>
 
+##### Step 3: Check model fit
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[Back to top](#session2)
+As you can see, the model identified some positions that are outlier (x on the above plots). These are positions that do not fit within the
+modeled movement process. The fitted positions have also 'corrected' some of the positions (in yellow above), and have plotted the original positions
+in blue. We can next look at the predicted component of the model, and see how well the model fit the data, we use the `osar()` function for this:
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
+resid <- read_rds("data/aniMotum_resid.RDS")
+```
+```{r, eval=FALSE}
+## Lets check the model fit, and then see what the model predictions look like
+
+resid <- osar(fit)
+```
+```{r, eval=TRUE, message=FALSE, fig.show="hold", out.width="50%"}
+## Lets check our model fit for both tracks
+plot(resid, type = "qq")
+plot(resid, type = "acf")
+
+```
 
 <br><br>
 
-#### Visualising satellite tag data using ***ggspatial***
+We can also look at how closely the predicted positions compare to the 'corrected' fitted positions. This is often the best way to ascertain if the 
+model you produced is a good fit. You can play around with the model parameters (e.g., `vmax`) to make sure the model represents the biology of the
+animal you are tracking
 
-<br><br><br><br>
+```{r, message=FALSE, eval=TRUE, fig.align = 'center', fig.height = 3, fig.width = 10}
+
+plot(fit, 
+     what = "predicted", 
+     type = 2,
+     pages = 1,
+     ncol = 2)
+
+
+```
+
+<br><br>
+
+##### Step 4: Visualise movement model estimates
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Since we ran the 'mp' model, we also have values of move persistence for each predicted location. **Move persistence ($\gamma_t$)** is an index of movement behaviour
+and is a continuous value between 0 - 1. The value represents changes in movement pattern for that individual based on autocorrelation in speed and
+direction (see details [here](https://doi.org/10.1002/ecy.2566)). We can look at the patterns in this metric for each tracked individual spatially
+and over the tracking period. Lower $\gamma_t$ values are related to slower movements that are often associated with *area restricted searching* behaviours often
+associated with foraging, with higher $\gamma_t$ values representing more linear movements that are associated with *migratory* behaviours.
+
+```{r, message=FALSE, eval=FALSE}
+
+plot(fit, 
+     what = "predicted", 
+     type = 3,
+     pages = 1,
+     ncol = 2,
+     normalise = TRUE)
+
+plot(fit, 
+     what = "predicted", 
+     type = 4,
+     pages = 1,
+     ncol = 2,
+     normalise = TRUE)
+
+```
+```{r, message=FALSE, eval=TRUE, echo = F, fig.align = 'center', fig.height = 3, fig.width = 10}
+
+plot(fit, 
+     what = "predicted", 
+     type = 3,
+     pages = 1,
+     ncol = 2,
+     normalise = TRUE)
+
+plot(fit, 
+     what = "predicted", 
+     type = 4,
+     pages = 1,
+     ncol = 2,
+     normalise = TRUE)
+
+
+```
+
+<br>
+
+We can use the `grab()` function to extract specific components of the model output to have a closer look at them, or produce your own maps using
+the other packages we have covered here like `ggspatial` and `mapview`. The `grab()` function also allows users to extract the positional data as a `sf` object
+and makes it so easy to them plot them using other packages.
+
+```{r, out.width = '100%'}
+## Lets plot our own version of the predicted component using mapview
+
+pred_data <- grab(fit, 
+                  what = "predicted", 
+                  as_sf = TRUE, 
+                  normalise = TRUE)
+
+## Lets convert the point dataset into a path using the `sf` package
+
+library(sf)
+
+pred_path <- 
+  pred_data %>% 
+  group_by(id) %>% 
+  summarise(do_union = FALSE) %>% 
+  st_cast("LINESTRING")
+
+## Now lets plot a nice interactive plot of the move persistence data using `mapview` and 'leaflet'
+
+library(mapview)
+library(leaflet)
+
+m_130 <-
+  mapview(pred_path %>% filter(id %in% "M-130"), alpha = 1, color = "white", homebutton = F, 
+          legend = F, map.type = c("Esri.WorldImagery"), layer.name = "M-130") +
+  mapview(pred_data %>% filter(id %in% "M-130"), alpha.regions = 1, alpha = 0, zcol = "g",
+          homebutton = F, legend = F, cex = 3, layer.name = "M-130", col.regions = heat.colors(183)) +
+  mapview(pred_data %>% filter(id %in% "M-130") %>% slice(1), alpha.regions = 1, alpha = 0,
+          col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-130") +
+  mapview(pred_data %>% filter(id %in% "M-130") %>% slice(n()), alpha.regions = 1, alpha = 0,
+          col.regions = "firebrick", homebutton = F, legend = F, layer.name = "M-130")
+
+m_150 <-
+  mapview(pred_path %>% filter(id %in% "M-150"), alpha = 1, color = "white", homebutton = F, 
+          legend = F, map.type = c("Esri.WorldImagery"), layer.name = "M-150") +
+  mapview(pred_data %>% filter(id %in% "M-150"), alpha.regions = 1, alpha = 0, zcol = "g",
+          homebutton = F, legend = F, cex = 3, layer.name = "M-150", col.regions = rev(heat.colors(107))) +
+  mapview(pred_data %>% filter(id %in% "M-150") %>% slice(1), alpha.regions = 1, alpha = 0,
+          col.regions = "darkgreen", homebutton = F, legend = F, layer.name = "M-150") +
+  mapview(pred_data %>% filter(id %in% "M-150") %>% slice(n()), alpha.regions = 1, alpha = 0,
+          col.regions = "firebrick", homebutton = F, legend = F, layer.name = "M-150")
+
+  
+(m_130 + m_150)@map %>% 
+  addLayersControl(
+        baseGroups = c("M-130", "M-150"),
+        options = layersControlOptions(collapsed = FALSE))
+
+```
+
+<br>
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+##### *Additional steps*
+
+The `aniMotum` package also allows users to use your fitted model to simulate similar tracks. This becomes very useful if you want to compare your
+animals track with other 'null' models. This allows for further hypothesis testing and analyses like resource selection functions. We won't go over
+this last step here, but you can read more about it from this [vignette](https://ianjonsen.github.io/aniMotum/articles/Track_simulation.html).
+
+Similarly, the package also allows users to adjust the predicted tracks produced to be re-routed around landmasses. This is extremely useful when working 
+with marine animal tracking. We wont go over this here as our example dataset represent Whale sharks primarily moving across open oceans. You can find
+more information and examples of how to use the path re-routing workflow from this [vignette](https://ianjonsen.github.io/aniMotum/articles/Path_rerouting.html).
+Now that you have a predicted track, you can also use a range of other packages to create animations of movements (e.g., [gganimate](https://gganimate.com)), 
+and explore 3D animal space use if depth data was also collected (e.g., [KUD3D](https://github.com/vinayudyawer/KUD3D) and [rayshader](https://www.rayshader.com)).
+
+</div>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1367,11 +1547,129 @@ fit_sf %>%
 
 ## Session 3
 
-### Working with passive acoustic telemetry data {.tabset .tabset-fade}
+### Working with passive acoustic telemetry data
 
 |                           |
 |:--------------------------|
 | ![](images/telemetry.png) |
+
+<br>
+
+Acoustic telemetry refers to tracking the movements of aquatic animals using high frequency sound pulses as an encoded signal. It typically involves two 
+pieces of equipment: 1) a transmitter or tag attached to the animal to be tracked, and 2) a receiver or listening station deployed at key locations and habitats,
+which records the presence of the tagged animal whenever it is within range (~200 – 800 m in most cases). 
+
+Acoustic Telemetry makes it possible for multiple animals to be monitored over long periods of time, and over scales of 100s of metres to 100s of kilometres.
+Information obtained from acoustic telemetry can inform habitat use, home range size, effectiveness of marine protected areas, refinement of stock assessment,
+and migratory patterns.
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+#### A two-part system {.tabset .tabset-fade .tabset-pills}
+
+##### Acoustic transmitters
+
+![](Images/Transmitter.gif)
+
+<br>
+
+Tracking the movement of animals involves affixing special tags to individuals that are being monitored. These tags, called acoustic transmitters, transmit high
+frequency acoustic signals that include a unique animal ID. Transmitters with sensors also transmit sensor data that may include temperature, pressure (depth) or
+acceleration. Long-term passive monitoring primarily uses coded tags that use a communication system called Pulse Position Modulation (PPM). This system works 
+where tags transmit a sequence of coded pulses.
+
+::: {style="display: grid; grid-template-columns: 1.5fr 1fr; grid-column-gap: 50px;"}
+
+<div>
+
+<br>
+
+Acoustic transmitters have been developed and commercially produced by a number of manufacturers. One manufacturer that has developed this technology within Australia
+and Asia is [Innovasea](https://www.innovasea.com/fish-tracking/), however there are a range of other manufacturers that produce similar tracking technologies. 
+Transmitters developed by Innovasea range in size from 15 - 98mm, with the largest tags having a battery life of 10 years. Depending on the size, shape and behaviour 
+of the study species, transmitters can be attached to individuals by conducting a minor surgical procedure. Larger animals, or animals difficult to handle can also be
+tagged externally using transmitters tethered to specialised dart tags. 
+
+</div>
+
+<div>
+
+<br>
+
+![](Images/Tag sizes.png) 
+
+</div>
+
+:::
+
+![](Images/External tag.png) 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##### Acoustic Receivers
+
+![](Images/Receiver.gif)
+
+<br>
+
+The second part of this system are hydrophone data loggers called ‘acoustic receivers' or 'listening stations’. These receivers record the unique animal ID
+transmitted by the tag, any sensor data and a timestamp when a tagged animal fitted is within detection range of a receiver. The detection range of a receiver
+depends on a range of factors, that can vary through time and depending on the deployment location. More information on detection range can be found  [here](https://support.vemco.com/s/article/How-much-detection-range-can-I-expect-from-my-tags-and-receivers) and [here](https://doi.org/10.1111/2041-210X.12520).
+
+::: {style="display: grid; grid-template-columns: 1fr 2fr; grid-column-gap: 40px;"}
+
+<div>
+
+<br>
+
+![](Images/Receiver 1.png)
+
+<br>
+
+</div>
+
+<div>
+
+<br>
+
+In most cases, multiple receivers (termed an ‘array’) are deployed at fixed locations around a study site, for the full period of the study (i.e., seasons, years),
+and allow for long-term continuous monitoring. The design of the receiver array depends on the question being explored, the animals being tracked, or the habitats 
+within the study site. [Heupel et al. 2006](https://doi.org/10.1071/MF05091) provides a good review of possible designs of acoustic arrays, including grids and curtains,
+to track marine animals.
+<br>
+![](Images/ArrayDesign.png)
+
+</div>
+
+:::
+
+</div>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+<a id="session3"></a>
+
+#### {.tabset .tabset-fade}
+
+##### Structure of acoustic telemetry data
+
+
+<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[Back to top](#session3)
+
+<br><br>
+
+
+##### Explore patterns of detection with ***VTrack***
+
+<br>
 
 In this session we will go through a brief walk through of how we can use the *VTrack* R package to quickly format and analyse large acoustic tracking
 datasets. A lot of the functions here do similar analyses to the ones you learned in the previous session. We will then go through a new R package
@@ -1384,12 +1682,6 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 <br><br>
 
-<a id="session3"></a>
-
-#### Structure of acoustic telemetry data
-
-<br>
-
 <br> <br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1398,19 +1690,7 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 <br><br>
 
-#### Explore patterns of detection with ***VTrack***
-
-<br>
-
-<br> <br>
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-[Back to top](#session3)
-
-<br><br>
-
-#### Explore your data with ***re***mo***ra***
+##### Explore your data with ***re***mo***ra***
 
 <br>
 
@@ -1419,7 +1699,7 @@ session 2, however we will use the ***IMOS Workshop_Bull-shark-sample-dataset***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-##### Signoff!
+**Signoff!**
 
 This is where we end our R workshop! There may have been a few bits of code that you had trouble with or need more time to work through. We encourage
 you to discuss these with me as well as others at the workshop to help get a handle on the R code.
@@ -1430,7 +1710,7 @@ If you have any comments or queries reguarding this workshop feel free to contac
 
 -   Dr. Vinay Udyawer: [v.udyawer@aims.gov.au](mailto:v.udyawer@aims.gov.au){.email}
 
-**Happy Tracking!**
+***Happy Tracking!***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 <br>
