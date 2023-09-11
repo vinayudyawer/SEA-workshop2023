@@ -20,15 +20,16 @@ editor_options:
 /* styles.css */
 
 .text-toggle button {
-  background-color: #007bff;
+  background-color: #009bff;
   color: #fff;
   border: none;
   padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .text-toggle button:hover {
-  background-color: #0056b3;
+  background-color: #0076b3;
 }
 
 #hidden-text {
@@ -135,7 +136,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 The course resources will be emailed to you prior to the workshop. However, you can also access the data and scripts we will work through in this
 course following these steps:
 
-**1. Download the course materials from [this link](https://github.com/vinayudyawer/SEA-workshop2023).**
+**1. Download the course materials from [this link](https://github.com/vinayudyawer/SEA-workshop2023/raw/main/data/SEA-Workshop-2023.zip).**
 
 **2. Unzip the downloaded file. It should have the following two folders and a html file:**
 
@@ -1783,8 +1784,8 @@ downloaded:
 
 <br>
 
-The `VTrack` package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
-have a more comprehensive walk through of `VTrack`, go through the examples on [this page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
+The **VTrack** package can be downloaded from GitHub. As we only have a short time for this session, I will only go over this briefly. If you want to
+have a more comprehensive walk through of **VTrack**, go through the examples on [this page](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html).
    
 
 ```{r, eval = FALSE}
@@ -1799,7 +1800,7 @@ library(mapview)
 
 <br>
 
-**Input, explore and format data from IMOS repository to use in VTrack**
+**Input, explore and format data from IMOS repository to use in** ***VTrack***
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2041,7 +2042,7 @@ monthly_dispersal %>%
 ![](images/session3/vtrack_5.png)
 <br>
 
-Like I mentioned above, since we have limited time to go through all the features of `VTrack` today, please go have a look
+Like I mentioned above, since we have limited time to go through all the features of **VTrack** today, please go have a look
 [here](https://vinayudyawer.github.io/ATT/docs/ATT_Vignette.html) to go through a more in-depth example of how the package can be used to calculate
 and visualise activity space estimates for large acoustic telemetry datasets.
 
@@ -2057,7 +2058,7 @@ and visualise activity space estimates for large acoustic telemetry datasets.
 
 <br>
 
-For this part of the session, we will go through some of the functionality of the new *`re**mo**ra* package. This package was created to assist users of 
+For this part of the session, we will go through some of the functionality of the new *re**mo**ra* package. This package was created to assist users of 
 the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) to easily explore and analyse their data. The intention is that 
 data exported and downloaded from the web portal can feed directly into the package to do quick analyses. The package also enables the integration of 
 animal telemetry data with oceanographic observations collected by IMOS and other ocean observing programs. The package includes functiosn that: 
@@ -2076,13 +2077,11 @@ The package follows the following rough workflow to enable project reporting, da
 <br>
 
 Today, due to limited time available, we will only go through one very useful aspect of the package; the **project reporting and data visualisation** functions.
-You can explore the full functionality of the package using vignettes that describe the different functions.
+
 
 ```{r, eval = FALSE}
 
 library(remora)
-
-browseVignettes(package = "remora")
 
 ```
 
@@ -2100,7 +2099,7 @@ shinyReport(type = "receivers")
 shinyReport(type = "transmitters")
 ```
 
-![](Images/shinyreport.png)
+![](images/session3/shinyreport.png)
 
 <br>
 
@@ -2113,249 +2112,14 @@ vignette("shinyReport_transmitters", package = "remora")
 
 <br>
 
-
-###### Undertaking Quality control checks on your raw detection data
-
-We an now use the functionality of *re**mo**ra* to conduct quality control checks with our **IMOS Workshop_Bull-shark-sample-dataset** in the data folder.
-
-For the package to find all the data in the correct place, we will make a list of locations of where all our particular files live on your computer.
+Like some of the functions of *re**mo**ra* we have covered quickly above, there is far more functionality that we just dont have time to cover here. 
+You can explore the full functionality of the package using vignettes that describe the different functions.
 
 ```{r, eval = FALSE}
-files <- list(det = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_detections.csv",
-              rmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_receiver_deployment_metadata.csv",
-              tmeta = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_transmitter_deployment_metadata.csv",
-              meas = "data/IMOS Workshop_Bull-shark-sample-dataset/IMOS_animal_measurements.csv")
-
-files
+browseVignettes(package = "remora")
 ```
 
-<br>
-
-We can now use the `runQC()` function to conduct a comprehensive quality control algorithm
-
-
-```{r, eval = FALSE}
-tag_qc <- runQC(x = files, .parallel = TRUE, .progress = TRUE)
-```
-
-<br>
-
-After running this code, each detection will have additional columns appended to it. These columns provide the results of each of 7 quality check conducted during this step. The QC algorithm tests 7 aspects of the detection data and grades each test as per below. An overall `Detection_QC` value is then calculated to provide rankings of **1:** ***valid***; **2:** ***likely valid***; **3:** ***unlikely valid***; or **4:** ***invalid detection***
-
-![](Images/QC/qc_tab.png)
-<br>
-
-You can now access each component of the results of the QC process using the `grabQC()` function
-
-```{r, eval = FALSE}
-## this will only grab the QC flags resulting from the algorithm
-grabQC(tag_qc, what = "QCflags")
-
-## this will extract all the relevant data as well as only detections that were deemed `valid` and `likely valid`
-qc_data <- grabQC(tag_qc, what = "dQC", flag = c("valid", "likely valid"))
-qc_data
-```
-
-<br>
-
-We can now visualise the QC detection process, mapping detections and their resulting QC flags
-
-```{r, eval = FALSE}
-plotQC(tag_qc)
-```
-
-![](Images/QC/Bull_Shark_QC.png)
-
-<br>
-
-For more information on these functions check out the vignette in the remora package
-
-```{r, eval = FALSE}
-vignette("runQC", package = "remora")
-```
-
-<br>
-
-###### Extracting and appending environmental variables to acoustic telemetry data
-
-We can also use *re**mo**ra* to identify environmental data (currently only within Australia) that overlap (spatially and temporally) with your animal telemetry data.
-The full list of variables you can access and append directly from R can be found using the `imos_variables()` function.
-
-```{r, eval = FALSE}
-imos_variables()
-```
-
-<br>
-
-**Remote sensed environmental variables**
-
-All the variables prefixed with `rs_` in the resulting table are rasterised remote sensed data that can be accessed. We can access and extract rasterised remote sensed data using the `extractEnv()` function
-
-For this example, lets use a smaller subset of the example dataset so we dont have to wait to download heaps of environmental data.
-
-```{r, eval = FALSE}
-subsetted_data <- 
-  qc_data %>%
-  filter(installation_name %in% c("IMOS-ATF Coffs Harbour line"))
-```
-
-<br>
-
-We will use the function to extract modelled (interpolated) Sea surface temperature (`rs_sst_interpolated`) across a subset of the bull shark data detected at the Coffs Harbour Line. This function requires at the very least coordinates and a timestamp (*X*, *Y* and *datetime* parameters) to run. The function is therefore not restricted to acoustic telemetry data only, and can be used for other spatial data from satellite tags or even occurrence data.
-
-```{r, eval = FALSE}
-sst_extract <-
-  extractEnv(df = extracted_data,
-             X = "receiver_deployment_longitude", 
-             Y = "receiver_deployment_latitude", 
-             datetime = "detection_datetime",
-             env_var = "rs_sst_interpolated",
-             cache_layers = TRUE,
-             crop_layers = TRUE,
-             full_timeperiod = FALSE,
-             folder_name = "sst",
-             .parallel = TRUE)
-```
-
-Explore the resulting data frame. It will have an additional column with the appended data
-
-```{r, eval = FALSE}
-sst_extract$rs_sst_interpolated
-```
-
-<br>
-
-We can now plot the detections along with the appended SST data that can be used for further analysis
-
-```{r, eval = FALSE}
-## plot SST data with detection data
-summarised_data <-
-  sst_extract %>% 
-  mutate(date = as.Date(detection_datetime)) %>% 
-  group_by(transmitter_id, date) %>% 
-  summarise(num_det = n(),
-            mean_sst = mean(rs_sst_interpolated, na.rm = T))
-
-ggplot(summarised_data, aes(x = date, y = transmitter_id, size = num_det, color = mean_sst)) +
-  geom_point() +
-  scale_color_viridis_c() +
-  labs(subtitle = "Interpolated sea surface temperature", x = "Date", 
-       y = NULL, color = "SST (˚C)", size = "Number of\nDetections") +
-  theme_bw()
-```
-
-<br>
-
-This workshop covers only the basics of this function. To learn more features including gap filling and buffering functionality check out the function vignette
-
-```{r, eval = FALSE}
-vignette("extractEnv", package = "remora")
-```
-
-<br>
-
-**In-situ data from mooring data from the IMOS National Mooring Network**
-
-If sub-sea variables are of interest, then the *re**mo**ra* package can be used to access, extract and append data from the nearest Oceanographic mooring deployed by the IMOS National Mooring Network. This can be done using the `extractMoor()` function. But before using this, we need to find the moorings that would be most relevant.
-
-<br>
-
-Lets use the full example dataset to see which moorings would be the closest and provide in-situ temperature data.
-We can access the metadata for all moorings that record temperature data
-
-
-```{r, eval = FALSE}
-moor_temp <- mooringTable(sensorType = "temperature")
-```
-
-we can now map the full network
-
-<br>
-
-```{r, eval = FALSE}
-moor_temp %>% 
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>% 
-  mapview(popup = paste("Site code", moor_temp$site_code,"<br>",
-                        "URL:", moor_temp$url, "<br>",
-                        "Standard names:", moor_temp$standard_names, "<br>",
-                        "Coverage start:", moor_temp$time_coverage_start, "<br>",
-                        "Coverage end:", moor_temp$time_coverage_end),
-          col.regions = "red", color = "white", layer.name = "IMOS Mooring")
-```
-
-![](Images/Mooring data/moorMap.png)
-
-
-<br>
-
-
-We can now find the closest mooring to our animal detections in both space (using the `getDistance()` function) and time (using the `getOverlap()` function)
-
-```{r, eval = FALSE}
-# identify nearest mooring in space
-det_dist <- getDistance(trackingData = qc_data,
-                        moorLocations = moor_temp,
-                        X = "receiver_deployment_longitude",
-                        Y = "receiver_deployment_latitude",
-                        datetime = "detection_datetime")
-
-# identify moorings that have overlapping data with detections
-mooring_overlap <- getOverlap(det_dist)
-
-# only select moorings with 100% temporal overlap (Poverlap = 1)
-mooring_overlap <-
-  mooring_overlap %>% 
-  filter(Poverlap == 1)
-```
-
-<br>
-
-Now that we have identified the moorings to extract data from we can run the `mooringDownload()` and `moorExtract()` functions
-
-```{r, eval = FALSE}
-## Download mooring data from closest moorings
-moorIDs <- unique(mooring_overlap$moor_site_code)
-
-moor_data <- mooringDownload(moor_site_codes = moorIDs,
-                             sensorType = "temperature",
-                             fromWeb = TRUE,
-                             file_loc = "imos.cache/moor/temperature")
-```
-
-<br>
-
-We can now visualise the temperature profile data alongside the animal detection data for a temporal subset of the data
-
-```{r, eval = FALSE}
-## Plot depth time of temperature from one mooring along with the detection data
-start_date <- "2020-01-01"
-end_date <- "2020-02-01"
-
-plotDT(moorData = moor_data$CH050, 
-       moorName = "CH050",
-       dateStart = start_date, dateEnd = end_date,
-       varName = "temperature",
-       trackingData = det_dist,
-       speciesID = "Carcharhinus leucas",
-       IDtype = "species_scientific_name",
-       detStart = start_date, detEnd = end_date)
-```
-![](Images/Mooring data/plotDT.png)
-
-<br>
-
-
-Like the other functions of *re**mo**ra* we have covered quickly above, there is far more functionality that we just dont have time to cover here. 
-To learn more features including accessing and appending other data and at specific depths check out the function's vignette
-
-```{r, eval = FALSE}
-vignette("extractMoor", package = "remora")
-```
-
-
-
-<br><br><br><br>
-
+<br><br>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
