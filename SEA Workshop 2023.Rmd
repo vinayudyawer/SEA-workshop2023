@@ -243,8 +243,9 @@ install.packages("aniMotum",
 
 ```
 
-When downloading from GitHub, the R console will ask you if it should also update packages. In most cases, you can proceed with updating packages only
-found on CRAN (**option [2]**).
+When downloading from **GitHub**, the R console will ask you if it should also update packages. In most cases, you can skip updating packages (**option [3]**)
+as this often stalls the whole process of downloading the package. If there are package dependencies, these will often be downloaded automatically (but not
+always!). If you want to update the packages you have, you can do it separately.
 
 </div>
 
@@ -773,12 +774,15 @@ them out. The main information we need to provide to convert it to a spatial obj
 the CRS for the data. Our receiver coordinates, and hence detection coordinates, were recorded in the **WGS 84** geographic datum in decimal degrees,
 which is the equivalent EPSG code of **4326**.
 
-```{r, message=FALSE, class.source = 'fold-show'}
+```{r, message=FALSE, class.source = 'fold-show', message=FALSE}
 library(sf)
 
 # Import datasets
-blacktip <- read_csv('Data/Session 1/Blacktip_ClevelandBay.csv')
-statinfo <- read_csv('Data/Session 1/Station_information.csv')
+blacktip <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Blacktip_ClevelandBay.csv')
+statinfo <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%201/Station_information.csv')
+
 
 cb_stations <- 
   statinfo %>% 
@@ -1264,7 +1268,7 @@ m_150 <-
 ::: {style="display: grid; grid-template-columns: 1fr 2fr; grid-column-gap: 60px;"}
 <div>
 
-We will use the [**aniMotum**](https://github.com/ianjonsen/aniMotum) package developed by Dr. Ian Jonsen. This package provides a quick and easy
+We will use the [***aniMotum***](https://github.com/ianjonsen/aniMotum) package developed by Dr. Ian Jonsen. This package provides a quick and easy
 means to refine positions by integrating the error associated with location data, and modelling the data to be able to predict locations at fixed
 intervals. The package also provides a means to explore potential movement behaviours using the characteristics of the track. For more details on
 the package you can explore the vignettes provided with the package, and also explore its applications in this [paper](https://doi.org/10.1111/2041-210X.14060).
@@ -1305,7 +1309,8 @@ Lets begin our data processing by first reading in the data, and formatting it s
 library(tidyverse)
 library(aniMotum)
 
-raw_data <- read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%202/Thaa_Whalesharks_ECOCEAN.csv')
+raw_data <- 
+  read_csv('https://raw.githubusercontent.com/vinayudyawer/SEA-workshop2023/main/data/Session%202/Thaa_Whalesharks_ECOCEAN.csv')
 
 head(raw_data)
 
@@ -1379,6 +1384,7 @@ fit <-
           vmax = 1.5, ## maximum speed of whale sharks (in m/s)
           model = "mp", ## Move persistence model
           time.step = 24) ## predict positions every 24 hours
+
 ```
 
 <br>
@@ -1714,7 +1720,7 @@ and suitable to your dataset will depend on your study design, research question
 Currently there are several data management tools that are extremely useful in storing, cleaning, exploring and analysing data obtained using Acoustic
 Telemetry. One that everyone here may be familiar with is the ***VUE*** software that you have been using to communicate with Innovasea receivers
 to offload and store data. In addition to software, several online data repositories exist to store and share acoustic telemetry data. The 
-[Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) maintained by IMOS ATF houses acoustic telemetry datasets collected 
+[Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) houses acoustic telemetry datasets collected 
 in Australia and users can store and access acoustic telemetry data through the database. Each data source have their own data export formats, which are 
 not always interchangeable when using with **R** packages. 
 
@@ -1749,7 +1755,7 @@ for each receiver within the array and tag deployment, which are also needed for
 
 <br><br>
 
-###### IMOS ATF format
+###### Australian Animal Acoustic Telemetry format
 
 Detection data exported from the [Australian Animal Acoustic Telemetry Database](https://animaltracking.aodn.org.au) has its own format. The database
 website allows reasearchers to access and download detection, tag metadata and receiver metadata for a selected tagging project. This data export have
